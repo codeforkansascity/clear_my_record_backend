@@ -25,7 +25,7 @@ pip install -r requirements.txt
 Export the following in your shell:
 
 ```
-export FLASK_APP=cmr
+export FLASK_APP=cmr_app.py
 ```
 
 Then, making sure you are inside the project directory:
