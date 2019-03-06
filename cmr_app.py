@@ -1,1 +1,1 @@
-from cmr_backend import cmr
+from cmr_backend.server import cmr
