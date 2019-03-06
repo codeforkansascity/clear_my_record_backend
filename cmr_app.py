@@ -1,1 +1,1 @@
-from cmr_backend.server import cmr
+from clear_my_record_backend.server import cmr
