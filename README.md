@@ -30,6 +30,14 @@ export FLASK_APP=cmr_app.py
 
 Then, making sure you are inside the project directory:
 
+Run schema and data migrations (if applicable):
+
+```
+flask db upgrade
+```
+
+To run the application:
+
 ```
 flask run
 ```
