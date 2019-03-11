@@ -1,4 +1,4 @@
-from flask import request, Response
+from flask import request, Response, jsonify
 from clear_my_record_backend.server import cmr, models, dbs
 from datetime import datetime
 
@@ -13,7 +13,10 @@ def qualifying_question():
 
 @cmr.route('/qualifying_questions', methods=['GET'])
 def qualifying_questions():
-    pass
+    questions = models.Qualifying_Questions.query.all()
+    # probably doesn't work how I want but we'll get to that later
+    question_dump = jsonify(list(map(lambda question: jsonify(question), questions)))
+    return Response(question_dump, status=200, mimetype='application/json')
 
 @cmr.route('/qualifying_answer', methods=['POST'])
 def qualifying_answer():
