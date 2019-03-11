@@ -1,3 +1,4 @@
+from flask import request, Response
 from clear_my_record_backend.server import cmr, models, dbs
 from datetime import datetime
 
@@ -20,16 +21,16 @@ def qualifying_answer():
         abort(400)
 
     qualifying_answer = {
-        'user_session': request.json.user_session,
-        'question_id': request.json.question_id,
-        'answer': request.json.answer,
-        'qualifying_answer': request.json.qualifying_answer,
-        'question_version_number': request.json.question_version_number,
-        'timestamp': datetime.fromtimestamp(request.json.timestamp),
+        "user_session": request.json['user_session'],
+        "question_id": request.json['question_id'],
+        "answer": request.json['answer'],
+        "qualifying_answer": request.json['qualifying_answer'],
+        "question_version_number": request.json['question_version_number'],
+        "timestamp": datetime.fromtimestamp(request.json['timestamp'])
     }
 
-    answer = models.Qualifying_Answer(qualifying_answer)
+    answer = models.Qualifying_Answers(qualifying_answer)
     dbs.session.add(answer)
     dbs.session.commit()
 
-    return 200
+    return Response('Success', status=200, mimetype='text/plain')

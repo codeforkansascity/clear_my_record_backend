@@ -17,5 +17,12 @@ class Qualifying_Answers(dbs.Model):
     question_version_number = dbs.Column(dbs.Float(asdecimal=True))
     timestamp = dbs.Column(dbs.DateTime, index=True, default=datetime.utcnow)
 
+    def __init__(self, *data, **kwargs):
+        for dictionary in data:
+            for key in dictionary:
+                setattr(self, key, dictionary[key])
+        for key in kwargs:
+            setattr(self, key, kwargs[key])
+
 # class Users(dbs.Model):
 #     pass
