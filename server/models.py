@@ -7,7 +7,6 @@ class Qualifying_Questions(dbs.Model):
     help_text = dbs.Column(dbs.Text)
     disqualifying_answer = dbs.Column(dbs.String(250))
 
-
 class Qualifying_Answers(dbs.Model):
     # First Integer ID is set as autoincrement in SQLAlchemy
     id = dbs.Column(dbs.Integer, primary_key=True)

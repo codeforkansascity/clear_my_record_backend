@@ -1,5 +1,5 @@
-from clear_my_record_backend.server import cmr
-
+from clear_my_record_backend.server import cmr, models, dbs
+from datetime import datetime
 
 @cmr.route('/')
 @cmr.route('/index')
@@ -16,4 +16,20 @@ def qualifying_questions():
 
 @cmr.route('/qualifying_answer', methods=['POST'])
 def qualifying_answer():
-    pass
+    if not request.json:
+        abort(400)
+
+    qualifying_answer = {
+        'user_session': request.json.user_session,
+        'question_id': request.json.question_id,
+        'answer': request.json.answer,
+        'qualifying_answer': request.json.qualifying_answer,
+        'question_version_number': request.json.question_version_number,
+        'timestamp': datetime.fromtimestamp(request.json.timestamp),
+    }
+
+    answer = models.Qualifying_Answer(qualifying_answer)
+    dbs.session.add(answer)
+    dbs.session.commit()
+
+    return 200
