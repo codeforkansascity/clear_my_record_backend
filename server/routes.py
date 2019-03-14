@@ -2,18 +2,22 @@ from flask import request, Response, abort
 from clear_my_record_backend.server import cmr, models, dbs
 from datetime import datetime
 
+
 @cmr.route('/')
 @cmr.route('/index')
 def index():
     return "Hello, World!"
 
+
 @cmr.route('/qualifying_question', methods=['GET'])
 def qualifying_question():
     pass
 
+
 @cmr.route('/qualifying_questions', methods=['GET'])
 def qualifying_questions():
     pass
+
 
 @cmr.route('/qualifying_answer', methods=['POST'])
 def qualifying_answer():
@@ -29,7 +33,7 @@ def qualifying_answer():
         "timestamp": datetime.fromtimestamp(request.json['timestamp'])
     }
 
-    answer = models.Qualifying_Answers(qualifying_answer)
+    answer = models.Qualifying_Answer(qualifying_answer)
     dbs.session.add(answer)
     dbs.session.commit()
 
