@@ -41,6 +41,6 @@ class User(dbs.Model):
 
 class Submission(dbs.Model):
     id = dbs.Column(dbs.Integer, primary_key=True)
-    submitter_id = dbs.Column(dbs.Integer, dbs.ForeignKey("users.id"))
+    submitter_id = dbs.Column(dbs.Integer, dbs.ForeignKey("user.id"))
     session_sub = dbs.Column(dbs.Integer,
                              dbs.ForeignKey("qualifying_answers.id"))
