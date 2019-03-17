@@ -36,5 +36,13 @@ class User(dbs.Model):
     submissions = dbs.relationship(
         "Qualifying_Answer", backref="author", lazy="dynamic")
 
+    def __init__(self, *data, **kwargs):
+        super(self, **kwargs).__init__()
+        for dictionary in data:
+            for key in dictionary:
+                setattr(self, key, dictionary[key])
+        for key in kwargs:
+            setattr(self, key, kwargs[key])
+
     def __repr__(self):
         return "<USER: {}".format(self.username)
