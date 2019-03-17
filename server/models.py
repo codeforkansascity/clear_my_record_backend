@@ -18,6 +18,7 @@ class Qualifying_Answer(dbs.Model):
     qualifying_answer = dbs.Column(dbs.String(250))
     question_version_number = dbs.Column(dbs.Float(asdecimal=True))
     timestamp = dbs.Column(dbs.DateTime, index=True, default=datetime.utcnow)
+    answerer_id = dbs.Column(dbs.Integer, dbs.ForeignKey("user.id"))
 
     def __init__(self, *data, **kwargs):
         for dictionary in data:
@@ -33,14 +34,7 @@ class User(dbs.Model):
     email = dbs.Column(dbs.String(120), index=True, unique=True)
     pw_hash = dbs.Column(dbs.String(128))
     submissions = dbs.relationship(
-        "Submission", backref="author", lazy="dynamic")
+        "Qualifying_Answer", backref="author", lazy="dynamic")
 
     def __repr__(self):
         return "<USER: {}".format(self.username)
-
-
-class Submission(dbs.Model):
-    id = dbs.Column(dbs.Integer, primary_key=True)
-    submitter_id = dbs.Column(dbs.Integer, dbs.ForeignKey("user.id"))
-    session_sub = dbs.Column(dbs.Integer,
-                             dbs.ForeignKey("qualifying_answers.id"))
