@@ -33,7 +33,7 @@ class User(dbs.Model):
     email = dbs.Column(dbs.String(120), index=True, unique=True)
     pw_hash = dbs.Column(dbs.String(128))
     submissions = dbs.relationship(
-        "Submission", backef="author", lazy="dynamic")
+        "Submission", backref="author", lazy="dynamic")
 
     def __repr__(self):
         return "<USER: {}".format(self.username)
@@ -42,4 +42,5 @@ class User(dbs.Model):
 class Submission(dbs.Model):
     id = dbs.Column(dbs.Integer, primary_key=True)
     submitter_id = dbs.Column(dbs.Integer, dbs.ForeignKey("users.id"))
-    session_sub = dbs.Column(dbs.Integer, dbs.Foreign("qualifying_answers.id"))
+    session_sub = dbs.Column(dbs.Integer,
+                             dbs.ForeignKey("qualifying_answers.id"))
