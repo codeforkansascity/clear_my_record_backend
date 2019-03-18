@@ -10,7 +10,7 @@ class Qualifying_Questions(dbs.Model):
 class Qualifying_Answers(dbs.Model):
     # First Integer ID is set as autoincrement in SQLAlchemy
     id = dbs.Column(dbs.Integer, primary_key=True)
-    user_session = dbs.Column(dbs.String(250), index=True, unique=True)
+    user_session = dbs.Column(dbs.String(250), index=True, unique=False)
     question_id = dbs.Column(dbs.String(250))
     answer = dbs.Column(dbs.Text)
     qualifying_answer = dbs.Column(dbs.String(250))
