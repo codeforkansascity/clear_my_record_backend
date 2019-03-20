@@ -21,6 +21,7 @@ class Qualifying_Answer(dbs.Model):
     answerer_id = dbs.Column(dbs.Integer, dbs.ForeignKey("user.id"))
 
     def __init__(self, *data, **kwargs):
+        super(self, **kwargs).__init__()
         for dictionary in data:
             for key in dictionary:
                 setattr(self, key, dictionary[key])
