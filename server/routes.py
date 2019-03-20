@@ -1,6 +1,7 @@
 from flask import request, Response, abort
 from clear_my_record_backend.server import cmr, models, dbs
 from datetime import datetime
+import time
 
 
 @cmr.route('/')
@@ -30,7 +31,7 @@ def qualifying_answer():
         "answer": request.json['answer'],
         "qualifying_answer": request.json['qualifying_answer'],
         "question_version_number": request.json['question_version_number'],
-        "timestamp": datetime.fromtimestamp(request.json['timestamp'])
+        "timestamp": datetime.fromtimestamp(request.json['timestamp'] / 1000.0)
     }
 
     answer = models.Qualifying_Answer(qualifying_answer)

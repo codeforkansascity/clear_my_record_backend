@@ -17,10 +17,11 @@ class Qualifying_Answer(dbs.Model):
     answer = dbs.Column(dbs.Text)
     qualifying_answer = dbs.Column(dbs.String(250))
     question_version_number = dbs.Column(dbs.Float(asdecimal=True))
-    timestamp = dbs.Column(dbs.DateTime, index=True, default=datetime.utcnow)
+    timestamp = dbs.Column(dbs.DateTime, index=True)
     answerer_id = dbs.Column(dbs.Integer, dbs.ForeignKey("user.id"))
 
     def __init__(self, *data, **kwargs):
+        super(Qualifying_Answer, self).__init__(**kwargs)
         for dictionary in data:
             for key in dictionary:
                 setattr(self, key, dictionary[key])
@@ -37,7 +38,7 @@ class User(dbs.Model):
         "Qualifying_Answer", backref="author", lazy="dynamic")
 
     def __init__(self, *data, **kwargs):
-        super(self, **kwargs).__init__()
+        super(User, self).__init__(**kwargs)
         for dictionary in data:
             for key in dictionary:
                 setattr(self, key, dictionary[key])
