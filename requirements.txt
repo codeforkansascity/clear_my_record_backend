@@ -3,12 +3,13 @@ Click==7.0
 entrypoints==0.3
 flake8==3.7.6
 Flask==1.0.2
+Flask-Cors==3.0.7
 Flask-Migrate==2.4.0
 Flask-SQLAlchemy==2.3.2
 itsdangerous==1.1.0
 Jinja2==2.10
 Mako==1.0.7
-MarkupSafe==1.1.0
+MarkupSafe==1.1.1
 mccabe==0.6.1
 pep8==1.7.1
 pycodestyle==2.5.0
