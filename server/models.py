@@ -1,6 +1,6 @@
 from clear_my_record_backend.server import dbs
 from werkzeug.security import generate_password_hash, check_password_hash
-
+from enum import Enum
 
 class Qualifying_Question(dbs.Model):
     id = dbs.Column(dbs.Integer, primary_key=True)
@@ -66,3 +66,30 @@ class User(dbs.Model):
     @classmethod
     def find_by_username(cls, _username):
         return cls.query.filter_by(username=_username).first()
+
+class Client(dbs.Model):
+    id = dbs.Column(dbs.Integer, primary_key=True)
+    # convictions = dbs.relationship("Convictions")
+
+class Conviction(dbs.Model):
+    id = dbs.Column(dbs.Integer, primary_key=True)
+    # client_id = dbs.relationship(dbs.Integer, dbs.ForeignKey('client.id'))
+    case_number = dbs.Column(dbs.String)
+    court = dbs.Column(dbs.String)
+    jurisdiction = dbs.Column(dbs.String)
+    judge = dbs.Column(dbs.String)
+    record_name = dbs.Column(dbs.String)
+    release_status = dbs.Column(dbs.String)
+    release_date = dbs.Column(dbs.Date)
+    charges = dbs.relationship("Charge")
+
+class Charge(dbs.Model):
+    charge_types = Enum('CHARGE', 'FELONY MISDEMEANOR')
+    class_types = Enum('CLASS', 'A B C D E UNDEFINED')
+
+    id = dbs.Column(dbs.Integer, primary_key=True)
+    conviction_id = dbs.relationship(dbs.Integer, dbs.ForeignKey("conviction.id"))
+    charge = dbs.Column(dbs.String)
+    sentence = dbs.Column(dbs.String)
+    charge_type = dbs.Column(dbs.Enum(charge_types))
+    class_type = dbs.Column(dbs.Enum(class_types))
