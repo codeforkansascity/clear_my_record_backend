@@ -72,11 +72,21 @@ class User(dbs.Model):
 
 class Client(dbs.Model):
     id = dbs.Column(dbs.Integer, primary_key=True)
-    # convictions = dbs.relationship("Convictions")
+    name = dbs.Column(dbs.String)
+    dob = dbs.Column(dbs.Date)
+    # 123-456-7890
+    phone = dbs.Column(dbs.VARCHAR(12))
+    address = dbs.Column(dbs.String)
+    city = dbs.Column(dbs.String)
+    state = dbs.Column(dbs.String)
+    # 64111 or 64111-0000
+    zip_code = dbs.Column(dbs.VARCHAR(10))
+    status = dbs.Column(dbs.String)
+    active = dbs.Column(dbs.Boolean)
+    convictions = dbs.relationship('Conviction', backref='client')
 
 class Conviction(dbs.Model):
     id = dbs.Column(dbs.Integer, primary_key=True)
-    # client_id = dbs.relationship(dbs.Integer, dbs.ForeignKey('client.id'))
     case_number = dbs.Column(dbs.String)
     court = dbs.Column(dbs.String)
     jurisdiction = dbs.Column(dbs.String)
@@ -84,13 +94,16 @@ class Conviction(dbs.Model):
     record_name = dbs.Column(dbs.String)
     release_status = dbs.Column(dbs.String)
     release_date = dbs.Column(dbs.Date)
+    expungeable = dbs.Column(dbs.Boolean)
     charges = dbs.relationship('Charge', backref='conviction', lazy='dynamic')
+    client_id = dbs.column(dbs.Integer, dbs.ForeignKey('client.id'))
 
 class Charge(dbs.Model):
     id = dbs.Column(dbs.Integer, primary_key=True)
-    conviction_id = dbs.Column(dbs.Integer, dbs.ForeignKey('conviction.id'))
     charge = dbs.Column(dbs.String)
     sentence = dbs.Column(dbs.String)
+    expungeable = dbs.Column(dbs.Boolean)
     # rethink how we're doing this, probably
     charge_type = dbs.Column(dbs.Enum(charge_types))
     class_type = dbs.Column(dbs.Enum(class_types))
+    conviction_id = dbs.Column(dbs.Integer, dbs.ForeignKey('conviction.id'))
