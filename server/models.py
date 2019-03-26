@@ -2,6 +2,9 @@ from clear_my_record_backend.server import dbs
 from werkzeug.security import generate_password_hash, check_password_hash
 from enum import Enum
 
+charge_types = Enum('CHARGE', 'FELONY MISDEMEANOR')
+class_types = Enum('CLASS', 'A B C D E UNDEFINED')
+
 class Qualifying_Question(dbs.Model):
     id = dbs.Column(dbs.Integer, primary_key=True)
     question = dbs.Column(dbs.Text)
@@ -81,15 +84,13 @@ class Conviction(dbs.Model):
     record_name = dbs.Column(dbs.String)
     release_status = dbs.Column(dbs.String)
     release_date = dbs.Column(dbs.Date)
-    charges = dbs.relationship("Charge")
+    charges = dbs.relationship('Charge', backref='conviction', lazy='dynamic')
 
 class Charge(dbs.Model):
-    charge_types = Enum('CHARGE', 'FELONY MISDEMEANOR')
-    class_types = Enum('CLASS', 'A B C D E UNDEFINED')
-
     id = dbs.Column(dbs.Integer, primary_key=True)
-    conviction_id = dbs.relationship(dbs.Integer, dbs.ForeignKey("conviction.id"))
+    conviction_id = dbs.Column(dbs.Integer, dbs.ForeignKey('conviction.id'))
     charge = dbs.Column(dbs.String)
     sentence = dbs.Column(dbs.String)
+    # rethink how we're doing this, probably
     charge_type = dbs.Column(dbs.Enum(charge_types))
     class_type = dbs.Column(dbs.Enum(class_types))
