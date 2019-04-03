@@ -1,9 +1,11 @@
 from clear_my_record_backend.server import dbs
 from werkzeug.security import generate_password_hash, check_password_hash
 from enum import Enum
+from datetime import datetime
 
 charge_types = Enum('CHARGE', 'FELONY MISDEMEANOR')
 class_types = Enum('CLASS', 'A B C D E UNDEFINED')
+user_types = Enum('USER', 'LAWYER CLIENT ADMIN SUPER_ADMIN')
 
 class Qualifying_Question(dbs.Model):
     id = dbs.Column(dbs.Integer, primary_key=True)
@@ -39,6 +41,11 @@ class User(dbs.Model):
     pw_hash = dbs.Column(dbs.String(128))
     submissions = dbs.relationship(
         "Qualifying_Answer", backref="author", lazy="dynamic")
+    user_type = dbs.Column(dbs.Enum(user_types))
+    created_by = dbs.Column(dbs.Integer)
+    modified_by = dbs.Column(dbs.Integer)
+    created_at = dbs.Column(dbs.DateTime, default=datetime.datetime.utcnow)
+    updated_at = dbs.Column(dbs.DateTime, default=datetime.datetime.utcnow)
 
     def __init__(self, *data, **kwargs):
         super(User, self).__init__(**kwargs)
@@ -72,38 +79,82 @@ class User(dbs.Model):
 
 class Client(dbs.Model):
     id = dbs.Column(dbs.Integer, primary_key=True)
-    name = dbs.Column(dbs.String)
-    dob = dbs.Column(dbs.Date)
+    full_name = dbs.Column(dbs.String)
     # 123-456-7890
     phone = dbs.Column(dbs.VARCHAR(12))
-    address = dbs.Column(dbs.String)
+    email = dbs.Column(dbs.String)
+    sex = dbs.Column(dbs.String)
+    race = dbs.Column(dbs.String)
+    dob = dbs.Column(dbs.Date)
+    address_line_1 = dbs.Column(dbs.String)
+    address_line_2 = dbs.Column(dbs.String)
     city = dbs.Column(dbs.String)
     state = dbs.Column(dbs.String)
     # 64111 or 64111-0000
     zip_code = dbs.Column(dbs.VARCHAR(10))
+    license_number = dbs.Column(String)
+    license_issuing_state = dbs.Column(dbs.VARCHAR(2))
+    license_expiration_date = dbs.Column(dbs.Date)
     status = dbs.Column(dbs.String)
     active = dbs.Column(dbs.Boolean)
     convictions = dbs.relationship('Conviction', backref='client')
+    created_by = dbs.Column(dbs.Integer)
+    modified_by = dbs.Column(dbs.Integer)
+    created_at = dbs.Column(dbs.DateTime, default=datetime.datetime.utcnow)
+    updated_at = dbs.Column(dbs.DateTime, default=datetime.datetime.utcnow)
+
+    def __init__(self, *data, **kwargs):
+        super(Client, self).__init__(**kwargs)
+        for dictionary in data:
+            for key in dictionary:
+                setattr(self, key, dictionary[key])
+        for key in kwargs:
+            setattr(self, key, kwargs[key])
 
 class Conviction(dbs.Model):
     id = dbs.Column(dbs.Integer, primary_key=True)
+    client_id = dbs.column(dbs.Integer, dbs.ForeignKey('client.id'))
     case_number = dbs.Column(dbs.String)
-    court = dbs.Column(dbs.String)
-    jurisdiction = dbs.Column(dbs.String)
+    agency = dbs.Column(dbs.String)
+    court_name = dbs.Column(dbs.String)
+    court_city_county = dbs.Column(dbs.String)
     judge = dbs.Column(dbs.String)
     record_name = dbs.Column(dbs.String)
     release_status = dbs.Column(dbs.String)
     release_date = dbs.Column(dbs.Date)
-    expungeable = dbs.Column(dbs.Boolean)
     charges = dbs.relationship('Charge', backref='conviction', lazy='dynamic')
-    client_id = dbs.column(dbs.Integer, dbs.ForeignKey('client.id'))
+    created_by = dbs.Column(dbs.Integer)
+    modified_by = dbs.Column(dbs.Integer)
+    created_at = dbs.Column(dbs.DateTime, default=datetime.datetime.utcnow)
+    updated_at = dbs.Column(dbs.DateTime, default=datetime.datetime.utcnow)
+
+    def __init__(self, *data, **kwargs):
+        super(Conviction, self).__init__(**kwargs)
+        for dictionary in data:
+            for key in dictionary:
+                setattr(self, key, dictionary[key])
+        for key in kwargs:
+            setattr(self, key, kwargs[key])
+
 
 class Charge(dbs.Model):
     id = dbs.Column(dbs.Integer, primary_key=True)
-    charge = dbs.Column(dbs.String)
-    sentence = dbs.Column(dbs.String)
-    expungeable = dbs.Column(dbs.Boolean)
-    # rethink how we're doing this, probably
-    charge_type = dbs.Column(dbs.Enum(charge_types))
-    class_type = dbs.Column(dbs.Enum(class_types))
     conviction_id = dbs.Column(dbs.Integer, dbs.ForeignKey('conviction.id'))
+    charge = dbs.Column(dbs.String)
+    citation = dbs.Column(dbs.String)
+    sentence = dbs.Column(dbs.String)
+    class_type = dbs.Column(dbs.Enum(class_types))
+    charge_type = dbs.Column(dbs.Enum(charge_types))
+    eligible = dbs.Column(dbs.Boolean)
+    created_by = dbs.Column(dbs.Integer)
+    modified_by = dbs.Column(dbs.Integer)
+    created_at = dbs.Column(dbs.DateTime, default=datetime.datetime.utcnow)
+    updated_at = dbs.Column(dbs.DateTime, default=datetime.datetime.utcnow)
+
+    def __init__(self, *data, **kwargs):
+        super(Charge, self).__init__(**kwargs)
+        for dictionary in data:
+            for key in dictionary:
+                setattr(self, key, dictionary[key])
+        for key in kwargs:
+            setattr(self, key, kwargs[key])
