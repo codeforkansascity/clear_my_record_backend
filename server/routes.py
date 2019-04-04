@@ -1,7 +1,9 @@
 from flask import request, Response, abort
 from clear_my_record_backend.server import cmr, models, dbs
+from flask_jwt_extended import (jwt_required, create_access_token,
+                                get_jwt_identity)
+from flask_restful import Resource
 from datetime import datetime
-import time
 
 
 @cmr.route('/')
