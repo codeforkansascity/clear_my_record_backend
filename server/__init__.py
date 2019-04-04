@@ -19,3 +19,5 @@ api = Api(cmr)
 from clear_my_record_backend.server import routes, models, resources
 
 api.add_resource(resources.Register, '/register')
+api.add_resource(resources.Login, '/login')
+api.add_resource(resources.Me, '/me')
