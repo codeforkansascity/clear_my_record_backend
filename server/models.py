@@ -1,5 +1,11 @@
 from datetime import datetime
 from clear_my_record_backend.server import dbs
+from werkzeug.security import generate_password_hash, check_password_hash
+
+
+def save_to_dbs(entity):
+    dbs.session.add(entity)
+    dbs.session.commit()
 
 
 class Qualifying_Question(dbs.Model):
@@ -46,4 +52,23 @@ class User(dbs.Model):
             setattr(self, key, kwargs[key])
 
     def __repr__(self):
-        return "<USER: {}".format(self.username)
+        return "<USER: {}>".format(self.username)
+
+    def set_password(self, password):
+        self.pw_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.pw_hash, password)
+
+    def exists(self):
+        name = User.query.filter_by(username=self.username).first()
+        email = User.query.filter_by(email=self.email).first()
+        return name is not None or email is not None
+
+    @classmethod
+    def find_by_email(cls, _email):
+        return cls.query.filter_by(email=_email).first()
+
+    @classmethod
+    def find_by_username(cls, _username):
+        return cls.query.filter_by(username=_username).first()

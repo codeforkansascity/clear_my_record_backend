@@ -7,3 +7,6 @@ class Config(object):
         'sqlite:////' + os.path.join(basedir, 'app.db')
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+    # DEV ONLY
+    JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY') or 'enter-the-shaolin'
