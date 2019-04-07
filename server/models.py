@@ -42,8 +42,9 @@ class User(dbs.Model):
     submissions = dbs.relationship(
         "Qualifying_Answer", backref="author", lazy="dynamic")
     user_type = dbs.Column(dbs.Enum(user_types))
-    created_at = dbs.Column(dbs.DateTime, default=datetime.datetime.utcnow)
-    updated_at = dbs.Column(dbs.DateTime, default=datetime.datetime.utcnow)
+    clients = dbs.relationship('Client', backref='user', lazy='dynamic')
+    created_at = dbs.Column(dbs.DateTime, default=datetime.utcnow)
+    updated_at = dbs.Column(dbs.DateTime, default=datetime.utcnow)
 
     def __init__(self, *data, **kwargs):
         super(User, self).__init__(**kwargs)
@@ -77,6 +78,7 @@ class User(dbs.Model):
 
 class Client(dbs.Model):
     id = dbs.Column(dbs.Integer, primary_key=True)
+    user_id = dbs.Column(dbs.Integer, dbs.ForeignKey('user.id'))
     full_name = dbs.Column(dbs.String)
     # 123-456-7890
     phone = dbs.Column(dbs.VARCHAR(12))
@@ -90,14 +92,14 @@ class Client(dbs.Model):
     state = dbs.Column(dbs.String)
     # 64111 or 64111-0000
     zip_code = dbs.Column(dbs.VARCHAR(10))
-    license_number = dbs.Column(String)
+    license_number = dbs.Column(dbs.String)
     license_issuing_state = dbs.Column(dbs.VARCHAR(2))
     license_expiration_date = dbs.Column(dbs.Date)
     status = dbs.Column(dbs.String)
     active = dbs.Column(dbs.Boolean)
-    convictions = dbs.relationship('Conviction', backref='client')
-    created_at = dbs.Column(dbs.DateTime, default=datetime.datetime.utcnow)
-    updated_at = dbs.Column(dbs.DateTime, default=datetime.datetime.utcnow)
+    convictions = dbs.relationship('Conviction', backref='client', lazy='dynamic')
+    created_at = dbs.Column(dbs.DateTime, default=datetime.utcnow)
+    updated_at = dbs.Column(dbs.DateTime, default=datetime.utcnow)
 
     def __init__(self, *data, **kwargs):
         super(Client, self).__init__(**kwargs)
@@ -109,7 +111,7 @@ class Client(dbs.Model):
 
 class Conviction(dbs.Model):
     id = dbs.Column(dbs.Integer, primary_key=True)
-    client_id = dbs.column(dbs.Integer, dbs.ForeignKey('client.id'))
+    client_id = dbs.Column(dbs.Integer, dbs.ForeignKey('client.id'))
     case_number = dbs.Column(dbs.String)
     agency = dbs.Column(dbs.String)
     court_name = dbs.Column(dbs.String)
@@ -119,8 +121,8 @@ class Conviction(dbs.Model):
     release_status = dbs.Column(dbs.String)
     release_date = dbs.Column(dbs.Date)
     charges = dbs.relationship('Charge', backref='conviction', lazy='dynamic')
-    created_at = dbs.Column(dbs.DateTime, default=datetime.datetime.utcnow)
-    updated_at = dbs.Column(dbs.DateTime, default=datetime.datetime.utcnow)
+    created_at = dbs.Column(dbs.DateTime, default=datetime.utcnow)
+    updated_at = dbs.Column(dbs.DateTime, default=datetime.utcnow)
 
     def __init__(self, *data, **kwargs):
         super(Conviction, self).__init__(**kwargs)
@@ -140,8 +142,8 @@ class Charge(dbs.Model):
     class_type = dbs.Column(dbs.Enum(class_types))
     charge_type = dbs.Column(dbs.Enum(charge_types))
     eligible = dbs.Column(dbs.Boolean)
-    created_at = dbs.Column(dbs.DateTime, default=datetime.datetime.utcnow)
-    updated_at = dbs.Column(dbs.DateTime, default=datetime.datetime.utcnow)
+    created_at = dbs.Column(dbs.DateTime, default=datetime.utcnow)
+    updated_at = dbs.Column(dbs.DateTime, default=datetime.utcnow)
 
     def __init__(self, *data, **kwargs):
         super(Charge, self).__init__(**kwargs)
