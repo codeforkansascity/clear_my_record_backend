@@ -65,8 +65,13 @@ class Login(Resource):
 
 
 class Me(Resource):
-    def get(self):
-        return {'message': 'what do you want'}
 
-    def post(self):
-        return {'message': 'yep it is you, the user'}
+    @jwt_required
+    def get(self):
+        curr_user = User.find_by_username(get_jwt_identity())
+        data = {'status': "success", 'data': {
+            'id': curr_user.id,
+            'username': curr_user.username
+        }}
+
+        return data

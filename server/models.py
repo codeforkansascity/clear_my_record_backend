@@ -68,3 +68,7 @@ class User(dbs.Model):
     @classmethod
     def find_by_email(cls, _email):
         return cls.query.filter_by(email=_email).first()
+
+    @classmethod
+    def find_by_username(cls, _username):
+        return cls.query.filter_by(username=_username).first()
