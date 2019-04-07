@@ -42,8 +42,6 @@ class User(dbs.Model):
     submissions = dbs.relationship(
         "Qualifying_Answer", backref="author", lazy="dynamic")
     user_type = dbs.Column(dbs.Enum(user_types))
-    created_by = dbs.Column(dbs.Integer)
-    modified_by = dbs.Column(dbs.Integer)
     created_at = dbs.Column(dbs.DateTime, default=datetime.datetime.utcnow)
     updated_at = dbs.Column(dbs.DateTime, default=datetime.datetime.utcnow)
 
@@ -98,8 +96,6 @@ class Client(dbs.Model):
     status = dbs.Column(dbs.String)
     active = dbs.Column(dbs.Boolean)
     convictions = dbs.relationship('Conviction', backref='client')
-    created_by = dbs.Column(dbs.Integer)
-    modified_by = dbs.Column(dbs.Integer)
     created_at = dbs.Column(dbs.DateTime, default=datetime.datetime.utcnow)
     updated_at = dbs.Column(dbs.DateTime, default=datetime.datetime.utcnow)
 
@@ -123,8 +119,6 @@ class Conviction(dbs.Model):
     release_status = dbs.Column(dbs.String)
     release_date = dbs.Column(dbs.Date)
     charges = dbs.relationship('Charge', backref='conviction', lazy='dynamic')
-    created_by = dbs.Column(dbs.Integer)
-    modified_by = dbs.Column(dbs.Integer)
     created_at = dbs.Column(dbs.DateTime, default=datetime.datetime.utcnow)
     updated_at = dbs.Column(dbs.DateTime, default=datetime.datetime.utcnow)
 
@@ -146,8 +140,6 @@ class Charge(dbs.Model):
     class_type = dbs.Column(dbs.Enum(class_types))
     charge_type = dbs.Column(dbs.Enum(charge_types))
     eligible = dbs.Column(dbs.Boolean)
-    created_by = dbs.Column(dbs.Integer)
-    modified_by = dbs.Column(dbs.Integer)
     created_at = dbs.Column(dbs.DateTime, default=datetime.datetime.utcnow)
     updated_at = dbs.Column(dbs.DateTime, default=datetime.datetime.utcnow)
 
