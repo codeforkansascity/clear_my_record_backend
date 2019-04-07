@@ -64,3 +64,7 @@ class User(dbs.Model):
         name = User.query.filter_by(username=self.username).first()
         email = User.query.filter_by(email=self.email).first()
         return name is not None or email is not None
+
+    @classmethod
+    def find_by_email(cls, _email):
+        return cls.query.filter_by(email=_email).first()

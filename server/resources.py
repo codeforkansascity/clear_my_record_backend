@@ -3,7 +3,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from flask_restful import Resource, reqparse
 from flask_jwt_extended import (jwt_required, create_access_token,
                                 create_refresh_token, get_jwt_identity)
-from clear_my_record_backend.server.models import User, save_to_dbs
+from clear_my_record_backend.server.models import User, save_to_dbs, dbs
 
 
 class Register(Resource):
@@ -48,7 +48,20 @@ class Register(Resource):
 
 class Login(Resource):
     def post(self):
-        return {'message': 'User Login'}
+        u = User.find_by_email(request.json['email'])
+        if u:
+            if u.check_password(request.json['password']):
+                token = create_access_token(identity=u.username)
+                refresh = create_refresh_token(identity=u.username)
+                data = {'status': "success", 'data': {
+                    'type': "bearer",
+                    'token': token,
+                    'refreshToken': refresh}}
+                return data
+            # TODO better error!
+            return "made it inside at least"
+        # TODO better error!
+        return "nope"
 
 
 class Me(Resource):
