@@ -1,11 +1,5 @@
-from datetime import datetime
 from clear_my_record_backend.server import dbs
 from werkzeug.security import generate_password_hash, check_password_hash
-
-
-def save_to_dbs(entity):
-    dbs.session.add(entity)
-    dbs.session.commit()
 
 
 class Qualifying_Question(dbs.Model):
