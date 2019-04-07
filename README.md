@@ -26,6 +26,7 @@ Export the following in your shell:
 
 ```
 export FLASK_APP=cmr_app.py
+export FLASK_DEBUG=1
 ```
 
 Then, making sure you are inside the project directory:
