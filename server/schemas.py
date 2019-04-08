@@ -15,7 +15,8 @@ class ChargeSchema(ma.ModelSchema):
             'sentence',
             'class_type',
             'charge_type',
-            'eligible'
+            'eligible',
+            'conviction'
         )
 
 class ConvictionSchema(ma.ModelSchema):

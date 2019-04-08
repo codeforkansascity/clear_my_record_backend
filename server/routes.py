@@ -1,6 +1,6 @@
 from flask import request, Response, abort, jsonify
 from clear_my_record_backend.server import cmr, models, dbs
-from clear_my_record_backend.server.schemas import user_schema, client_schema, conviction_schema, convictions_schema, charge_schema
+from clear_my_record_backend.server.schemas import user_schema, client_schema, conviction_schema, convictions_schema, charge_schema, charges_schema
 from flask_jwt_extended import (jwt_required, create_access_token,
                                 get_jwt_identity)
 from flask_restful import Resource
@@ -89,7 +89,7 @@ def delete_client(client_id):
 
 @cmr.route('/clients/<int:client_id>/convictions', methods=['GET'])
 def get_client_convictions(client_id):
-    client_convictions = models.Conviction.query.filter_by(client_id=client_id).all()
+    client_convictions = models.Conviction.query.filter(models.Client.id==client_id).all()
     if client_convictions is None:
         return Response("Could not find any convictions for Client {}".format(client_convictions, status=404, mimetype='text/plain'))
     result = convictions_schema.dump(client_convictions)
@@ -128,7 +128,13 @@ def delete_conviction(conviction_id):
 
 @cmr.route('/clients/<int:client_id>/convictions/<int:conviction_id>/charges', methods=['GET'])
 def get_client_charges(client_id, conviction_id):
-    pass
+    charges = models.Charge.query.filter(models.Client.id==client_id and models.Conviction.id==conviction_id).all()
+    if charges is None:
+        return Response("Could not find charges for client {} and conviction {}".format(client_id, conviction_id), status=404, mimetype='text/plain')
+    result = charges_schema.dump(charges)
+
+    return jsonify(result.data)
+
 
 
 @cmr.route('/clients/<int:client_id>/convictions/<int:conviction_id>/charges', methods=['POST'])
@@ -138,7 +144,13 @@ def add_client_charges(client_id, conviction_id):
 
 @cmr.route('/charges/<int:charge_id>', methods=['GET'])
 def get_charge(charge_id):
-    pass
+    charge = models.Charge.query.get(charge_id)
+    if charge is None:
+        return Response("Could not find charge with ID {}".format(charge_id), status=404, mimetype='text/plain')
+
+    result = charge_schema.dump(charge)
+
+    return jsonify(result.data)
 
 
 @cmr.route('/charges/<int:charge_id>', methods=['PUT'])
