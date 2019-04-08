@@ -5,7 +5,7 @@ from datetime import datetime
 
 charge_types = Enum('CHARGE', 'FELONY MISDEMEANOR')
 class_types = Enum('CLASS', 'A B C D E UNDEFINED')
-user_types = Enum('USER', 'LAWYER CLIENT ADMIN SUPER_ADMIN')
+user_types = Enum('USER', 'CLINIC_STAFF LAWYER CLIENT ADMIN SUPER_ADMIN')
 
 class Qualifying_Question(dbs.Model):
     id = dbs.Column(dbs.Integer, primary_key=True)

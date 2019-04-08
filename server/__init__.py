@@ -5,10 +5,12 @@ from flask_migrate import Migrate
 from flask_cors import CORS
 from flask_restful import Api
 from flask_jwt_extended import JWTManager
+from flask_marshmallow import Marshmallow
 
 cmr = Flask(__name__)
 cmr.config.from_object(Config)
 dbs = SQLAlchemy(cmr)
+ma = Marshmallow(cmr)
 migratate = Migrate(cmr, dbs)
 CORS(cmr)
 jwt = JWTManager(cmr)
