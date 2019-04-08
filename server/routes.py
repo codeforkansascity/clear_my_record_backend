@@ -55,10 +55,21 @@ def get_user(user_id):
 
 @cmr.route('/users/<int:user_id>', methods=['POST'])
 def update_user(user_id):
-    # return id
-    usr = models.User.query.get(user_id)
-    pass
+    # is there a way to filter params like you can in rails?
+    if not request.json:
+        return Response('No JSON data', status=400, mimetype='test/plain')
 
+    usr = models.User.query.filter_by(id=user_id)
+    if usr is None:
+        return Response("User with ID {} not found".format(user_id), status=404, mimetype='text/plain')
+
+    updated_user = usr.update(request.json)
+    dbs.session.commit()
+
+    if updated_user is None:
+        return Response("Issue updating user with ID {}".format(user_id), status=500, mimetype='text/plain')
+
+    return jsonify(updated_user)
 
 @cmr.route('/clients', methods=['POST'])
 def add_client():
