@@ -9,6 +9,7 @@ class ChargesSchema(ma.ModelSchema):
 
 class ConvictionSchema(ma.ModelSchema):
     charge = ma.Nested(ChargesSchema, many=True)
+    client = ma.Nested('ClientSchema', exclude=('convictions', ))
 
     class Meta:
         model = Conviction
@@ -16,6 +17,7 @@ class ConvictionSchema(ma.ModelSchema):
 
 class ClientSchema(ma.Schema):
     convictions = ma.Nested(ConvictionSchema, many=True)
+    # exclude clients to avoid recursion issues lmao
     user = ma.Nested('UserSchema', exclude=('clients', ))
 
     class Meta:
@@ -47,3 +49,13 @@ class UserSchema(ma.ModelSchema):
     class Meta:
         model = User
         fields = ('id', 'username', 'clients')
+
+# schema instantiation for routes.py
+user_schema = UserSchema()
+users_schema = UserSchema(many=True)
+client_schema = ClientSchema()
+clients_schema = ClientSchema(many=True)
+conviction_schema = ConvictionSchema()
+convictions_schema = ConvictionSchema(many=True)
+charge_schema = ChargeSchema()
+charges_schema = ChargesSchema(many=True)
