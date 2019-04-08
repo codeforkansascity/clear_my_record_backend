@@ -1,10 +1,10 @@
-from flask import request, Response, abort
+from flask import request, Response, abort, jsonify
 from clear_my_record_backend.server import cmr, models, dbs
+from clear_my_record_backend.server.schemas import user_schema, client_schema, conviction_schema, convictions_schema, charge_schema
 from flask_jwt_extended import (jwt_required, create_access_token,
                                 get_jwt_identity)
 from flask_restful import Resource
 from datetime import datetime
-
 
 @cmr.route('/')
 @cmr.route('/index')
@@ -47,7 +47,10 @@ def qualifying_answer():
 def get_user(user_id):
     usr = models.User.query.get(user_id)
     if usr is None:
-        return Response("User with ID {} not found".format(user_id))
+        return Response("User with ID {} not found".format(user_id), status=404, mimetype='text/plain')
+    result = user_schema.dump(usr)
+
+    return jsonify(result.data)
 
 
 @cmr.route('/users/<int:user_id>', methods=['POST'])
@@ -65,7 +68,12 @@ def add_client():
 
 @cmr.route('/clients/<int:client_id>', methods=['GET'])
 def get_client(client_id):
-    pass
+    cli = models.Client.query.get(client_id)
+    if cli is None:
+        return Response("Client with ID {} not found".format(cli_id), status=404, mimetype='text/plain')
+    result = client_schema.dump(cli)
+
+    return jsonify(result.data)
 
 
 @cmr.route('/clients/<int:client_id>', methods=['POST'])
@@ -79,10 +87,15 @@ def delete_client(client_id):
     pass
 
 
-@cmr.route('/clents/<int:client_id>/convictions', methods=['GET'])
+@cmr.route('/clients/<int:client_id>/convictions', methods=['GET'])
 def get_client_convictions(client_id):
-    client_convictions = Client.query.get(client_id).convictions
-    pass
+    client_convictions = models.Conviction.query.filter_by(client_id=client_id).all()
+    if client_convictions is None:
+        return Response("Could not find any convictions for Client {}".format(client_convictions, status=404, mimetype='text/plain'))
+    result = convictions_schema.dump(client_convictions)
+
+    return jsonify(result.data)
+
 
 
 @cmr.route('/clients/<int:client_id>/convictions', methods=['POST'])
@@ -94,7 +107,11 @@ def add_client_conviction(client_id):
 @cmr.route('/convictions/<int:conviction_id>', methods=['GET'])
 def get_conviction(conviction_id):
     conviction = Conviction.query.get(conviction_id)
-    pass
+    if conviction is None:
+        return Response("Conviction with ID {} not found".format(conviction_id), status=404, mimetype='text/plain')
+    result = conviction_schema.dump(cli)
+
+    return jsonify(result.data)
 
 
 @cmr.route('/convictions/<int:conviction_id>', methods=['POST'])
