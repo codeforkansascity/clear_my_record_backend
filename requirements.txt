@@ -8,6 +8,7 @@ Flask==1.0.2
 Flask-Cors==3.0.7
 Flask-JWT-Extended==3.18.0
 Flask-Login==0.4.1
+flask-marshmallow==0.10.0
 Flask-Migrate==2.4.0
 Flask-RESTful==0.3.7
 Flask-SQLAlchemy==2.3.2
@@ -17,6 +18,8 @@ jedi==0.13.3
 Jinja2==2.10
 Mako==1.0.7
 MarkupSafe==1.1.1
+marshmallow==2.19.2
+marshmallow-sqlalchemy==0.16.1
 mccabe==0.6.1
 parso==0.3.4
 pep8==1.7.1
