@@ -58,6 +58,15 @@ class User(dbs.Model):
         for key in kwargs:
             setattr(self, key, kwargs[key])
 
+    def update(self, *data, **kwargs):
+        for dictionary in data:
+            for key in dictionary:
+                setattr(self, key, dictionary[key])
+        for key in kwargs:
+            setattr(self, key, kwargs[key])
+        return self
+
+
     def __repr__(self):
         return "<USER: {}>".format(self.username)
 

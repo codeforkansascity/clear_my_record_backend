@@ -61,7 +61,8 @@ def update_user(user_id):
     if not request.json:
         return Response('No JSON data', status=400, mimetype='test/plain')
 
-    usr = models.User.query.filter_by(id=user_id)
+    usr = models.User.query.get(user_id)
+
     if usr is None:
         return Response("User with ID {} not found".format(user_id), status=404, mimetype='text/plain')
 
@@ -72,22 +73,39 @@ def update_user(user_id):
         dbs.session.commit()
     except exc.InvalidRequestError as err:
         # not ideal, but works for now
+        dbs.session.rollback()
         return Response("{}".format(err), status=422, mimetype='text/plain')
     except exc.IntegrityError as err:
         # Do better with this
-        session.rollback()
-        return (Response("{}".format(err), status=400, mimetype='text/plain'))
+        dbs.session.rollback()
+        return Response("{}".format(err), status=400, mimetype='text/plain')
+    except Exception as err:
+        # this will have to work for now
+        dbs.session.rollback()
+        return Response("Issue updating user with ID {}".format(user_id), status=500, mimetype='text/plain')
 
     if updated_user is None:
         return Response("Issue updating user with ID {}".format(user_id), status=500, mimetype='text/plain')
 
-    return jsonify(updated_user)
+
+    dbs.session.flush()
+    return jsonify(updated_user.id)
 
 
 @cmr.route('/clients', methods=['POST'])
 def add_client():
     # return id
     pass
+
+
+@cmr.route('/clients', methods=['GET'])
+def get_clients():
+    cli = models.Client.query.all()
+    if cli is None:
+        return Response("Issue retreiving all clients".format(cli_id), status=404, mimetype='text/plain')
+    result = client_schema.dump(cli)
+
+    return jsonify(result.data)
 
 
 @cmr.route('/clients/<int:client_id>', methods=['GET'])
