@@ -4,6 +4,8 @@ from clear_my_record_backend.server.schemas import user_schema, client_schema, c
 from flask_jwt_extended import (jwt_required, create_access_token,
                                 get_jwt_identity)
 from flask_restful import Resource
+from webargs.flaskparser import use_args
+from sqlalchemy import exc
 from datetime import datetime
 
 @cmr.route('/')
@@ -63,13 +65,24 @@ def update_user(user_id):
     if usr is None:
         return Response("User with ID {} not found".format(user_id), status=404, mimetype='text/plain')
 
-    updated_user = usr.update(request.json)
-    dbs.session.commit()
+    updated_user = None
+
+    try:
+        updated_user = usr.update(request.json)
+        dbs.session.commit()
+    except exc.InvalidRequestError as err:
+        # not ideal, but works for now
+        return Response("{}".format(err), status=422, mimetype='text/plain')
+    except exc.IntegrityError as err:
+        # Do better with this
+        session.rollback()
+        return (Response("{}".format(err), status=400, mimetype='text/plain'))
 
     if updated_user is None:
         return Response("Issue updating user with ID {}".format(user_id), status=500, mimetype='text/plain')
 
     return jsonify(updated_user)
+
 
 @cmr.route('/clients', methods=['POST'])
 def add_client():
@@ -108,7 +121,6 @@ def get_client_convictions(client_id):
     return jsonify(result.data)
 
 
-
 @cmr.route('/clients/<int:client_id>/convictions', methods=['POST'])
 def add_client_conviction(client_id):
     # return id
@@ -117,10 +129,10 @@ def add_client_conviction(client_id):
 
 @cmr.route('/convictions/<int:conviction_id>', methods=['GET'])
 def get_conviction(conviction_id):
-    conviction = Conviction.query.get(conviction_id)
+    conviction = models.Conviction.query.get(conviction_id)
     if conviction is None:
         return Response("Conviction with ID {} not found".format(conviction_id), status=404, mimetype='text/plain')
-    result = conviction_schema.dump(cli)
+    result = conviction_schema.dump(conviction)
 
     return jsonify(result.data)
 
@@ -133,7 +145,7 @@ def update_conviction(conviction_id):
 
 @cmr.route('/convictions/<int:conviction_id>', methods=['DELETE'])
 def delete_conviction(conviction_id):
-    conviction = Conviction.query.get(conviction_id)
+    conviction = models.Conviction.query.get(conviction_id)
     pass
 
 
@@ -145,7 +157,6 @@ def get_client_charges(client_id, conviction_id):
     result = charges_schema.dump(charges)
 
     return jsonify(result.data)
-
 
 
 @cmr.route('/clients/<int:client_id>/convictions/<int:conviction_id>/charges', methods=['POST'])
