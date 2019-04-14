@@ -41,7 +41,7 @@ class User(dbs.Model):
     pw_hash = dbs.Column(dbs.String(128))
     submissions = dbs.relationship(
         "Qualifying_Answer", backref="author", lazy="dynamic")
-    user_type = dbs.Column(dbs.Enum(user_types))
+    user_type = dbs.Column(dbs.String)
     clients = dbs.relationship('Client', backref='user', lazy='dynamic')
     created_at = dbs.Column(dbs.DateTime, default=datetime.utcnow)
     updated_at = dbs.Column(dbs.DateTime, default=datetime.utcnow)
@@ -53,6 +53,15 @@ class User(dbs.Model):
                 setattr(self, key, dictionary[key])
         for key in kwargs:
             setattr(self, key, kwargs[key])
+
+    def update(self, *data, **kwargs):
+        for dictionary in data:
+            for key in dictionary:
+                setattr(self, key, dictionary[key])
+        for key in kwargs:
+            setattr(self, key, kwargs[key])
+        return self
+
 
     def __repr__(self):
         return "<USER: {}>".format(self.username)
@@ -67,6 +76,11 @@ class User(dbs.Model):
         name = User.query.filter_by(username=self.username).first()
         email = User.query.filter_by(email=self.email).first()
         return name is not None or email is not None
+
+    @dbs.validates('user_type')
+    def validate_user_type(self, key, user_type):
+        assert str(user_type).replace(' ', '_').upper() in user_types.__members__
+        return user_type
 
     @classmethod
     def find_by_email(cls, _email):
@@ -100,6 +114,7 @@ class Client(dbs.Model):
     convictions = dbs.relationship('Conviction', backref='client', lazy='dynamic')
     created_at = dbs.Column(dbs.DateTime, default=datetime.utcnow)
     updated_at = dbs.Column(dbs.DateTime, default=datetime.utcnow)
+    notes = dbs.Column(dbs.String)
 
     def __init__(self, *data, **kwargs):
         super(Client, self).__init__(**kwargs)
@@ -123,6 +138,7 @@ class Conviction(dbs.Model):
     charges = dbs.relationship('Charge', backref='conviction', lazy='dynamic')
     created_at = dbs.Column(dbs.DateTime, default=datetime.utcnow)
     updated_at = dbs.Column(dbs.DateTime, default=datetime.utcnow)
+    notes = dbs.Column(dbs.String)
 
     def __init__(self, *data, **kwargs):
         super(Conviction, self).__init__(**kwargs)
@@ -139,11 +155,13 @@ class Charge(dbs.Model):
     charge = dbs.Column(dbs.String)
     citation = dbs.Column(dbs.String)
     sentence = dbs.Column(dbs.String)
-    class_type = dbs.Column(dbs.Enum(class_types))
-    charge_type = dbs.Column(dbs.Enum(charge_types))
+    class_type = dbs.Column(dbs.String)
+    charge_type = dbs.Column(dbs.String)
     eligible = dbs.Column(dbs.Boolean)
+    please_expunge = dbs.Column(dbs.Boolean)
     created_at = dbs.Column(dbs.DateTime, default=datetime.utcnow)
     updated_at = dbs.Column(dbs.DateTime, default=datetime.utcnow)
+    notes = dbs.Column(dbs.String)
 
     def __init__(self, *data, **kwargs):
         super(Charge, self).__init__(**kwargs)
@@ -152,3 +170,13 @@ class Charge(dbs.Model):
                 setattr(self, key, dictionary[key])
         for key in kwargs:
             setattr(self, key, kwargs[key])
+
+    @dbs.validates('class_type')
+    def validate_class_type(self, key, class_type):
+        assert str(class_type).replace(' ', '_').upper() in class_types.__members__
+        return class_type
+
+    @dbs.validates('charge_type')
+    def validate_charge_type(self, key, charge_type):
+        assert str(charge_type).replace(' ', '_').upper() in charge_types.__members__
+        return charge_type

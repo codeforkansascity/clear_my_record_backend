@@ -16,11 +16,14 @@ class ChargeSchema(ma.ModelSchema):
             'class_type',
             'charge_type',
             'eligible',
-            'conviction'
+            'conviction',
+            'charge_type',
+            'class_type'
         )
 
 class ConvictionSchema(ma.ModelSchema):
-    charges = ma.Nested(ChargeSchema, many=True)
+    # need to figure out good way to exclude convictions.charges.convictions.users, etc etc
+    charges = ma.Nested(ChargeSchema, many=True, exclude=('convictions', ))
     client = ma.Nested('ClientSchema', exclude=('convictions', ))
 
     class Meta:
@@ -37,7 +40,7 @@ class ConvictionSchema(ma.ModelSchema):
             'record_name',
             'release_status',
             'release_date',
-            'charges',
+            'charges'
         )
 
 class ClientSchema(ma.Schema):
@@ -71,11 +74,11 @@ class ClientSchema(ma.Schema):
         )
 
 class UserSchema(ma.ModelSchema):
-    clients = ma.Nested(ClientSchema, many=True, exclude=('user', 'user_id', ))
+    clients = ma.Nested(ClientSchema, many=True, only=('id', 'full_name'))
 
     class Meta:
         model = User
-        fields = ('id', 'username', 'clients')
+        fields = ('id', 'username', 'clients', 'user_type')
 
 # schema instantiation for routes.py
 user_schema = UserSchema()
