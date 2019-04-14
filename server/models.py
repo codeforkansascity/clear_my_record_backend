@@ -41,11 +41,7 @@ class User(dbs.Model):
     pw_hash = dbs.Column(dbs.String(128))
     submissions = dbs.relationship(
         "Qualifying_Answer", backref="author", lazy="dynamic")
-<<<<<<< HEAD
-    user_type = dbs.Column(dbs.Enum(user_types))
-=======
     user_type = dbs.Column(dbs.String)
->>>>>>> more server/posts work
     clients = dbs.relationship('Client', backref='user', lazy='dynamic')
     created_at = dbs.Column(dbs.DateTime, default=datetime.utcnow)
     updated_at = dbs.Column(dbs.DateTime, default=datetime.utcnow)
@@ -118,10 +114,7 @@ class Client(dbs.Model):
     convictions = dbs.relationship('Conviction', backref='client', lazy='dynamic')
     created_at = dbs.Column(dbs.DateTime, default=datetime.utcnow)
     updated_at = dbs.Column(dbs.DateTime, default=datetime.utcnow)
-<<<<<<< HEAD
-=======
     notes = dbs.Column(dbs.String)
->>>>>>> more server/posts work
 
     def __init__(self, *data, **kwargs):
         super(Client, self).__init__(**kwargs)
@@ -145,10 +138,7 @@ class Conviction(dbs.Model):
     charges = dbs.relationship('Charge', backref='conviction', lazy='dynamic')
     created_at = dbs.Column(dbs.DateTime, default=datetime.utcnow)
     updated_at = dbs.Column(dbs.DateTime, default=datetime.utcnow)
-<<<<<<< HEAD
-=======
     notes = dbs.Column(dbs.String)
->>>>>>> more server/posts work
 
     def __init__(self, *data, **kwargs):
         super(Conviction, self).__init__(**kwargs)
