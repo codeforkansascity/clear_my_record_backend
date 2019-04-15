@@ -1,6 +1,8 @@
-from clear_my_record_backend.server import cmr, dbs, ma
+from clear_my_record_backend.server import create_app, dbs, ma
 from clear_my_record_backend.server.models import User, Qualifying_Answer, User, Client, Conviction, Charge, charge_types, class_types, user_types
 from clear_my_record_backend.server.schemas import UserSchema, ClientSchema
+
+cmr = create_app()
 
 
 @cmr.shell_context_processor
