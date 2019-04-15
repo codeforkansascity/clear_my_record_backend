@@ -1,6 +1,6 @@
 from flask import request, Response, abort, jsonify
 from clear_my_record_backend.server import cmr, models, dbs
-from clear_my_record_backend.server.schemas import user_schema, client_schema, conviction_schema, convictions_schema, charge_schema, charges_schema
+from clear_my_record_backend.server.schemas import user_schema, client_schema, clients_schema, conviction_schema, convictions_schema, charge_schema, charges_schema
 from flask_jwt_extended import (jwt_required, create_access_token,
                                 get_jwt_identity)
 from flask_restful import Resource
@@ -54,7 +54,7 @@ def get_user(user_id):
     return jsonify(result.data)
 
 
-@cmr.route('/users/<int:user_id>', methods=['POST'])
+@cmr.route('/users/<int:user_id>', methods=['PUT'])
 def update_user(user_id):
     # is there a way to filter params like you can in rails?
     if not request.json:
@@ -121,7 +121,7 @@ def get_clients():
     cli = models.Client.query.all()
     if cli is None:
         return Response("Issue retreiving all clients".format(cli), status=404, mimetype='text/plain')
-    result = client_schema.dump(cli)
+    result = clients_schema.dump(cli)
 
     return jsonify(result.data)
 
@@ -136,10 +136,39 @@ def get_client(client_id):
     return jsonify(result.data)
 
 
-@cmr.route('/clients/<int:client_id>', methods=['POST'])
+@cmr.route('/clients/<int:client_id>', methods=['PUT'])
 def update_client(client_id):
-    #return id
-    pass
+    if not request.json:
+        return Response('No JSON data', status=400, mimetype='test/plain')
+
+    client = models.Client.query.get(client_id)
+
+    if client is None:
+        return Response("Client with ID {} not found".format(client_id), status=404, mimetype='text/plain')
+
+    updated_client = None
+
+    try:
+        updated_client = client.update(request.json)
+        dbs.session.commit()
+    except AttributeError as err:
+        # not ideal, but works for now
+        dbs.session.rollback()
+        return Response("{}".format(err), status=422, mimetype='text/plain')
+    except exc.IntegrityError as err:
+        # Do better with this
+        dbs.session.rollback()
+        return Response("{}".format(err), status=400, mimetype='text/plain')
+    except Exception as err:
+        # this will have to work for now
+        dbs.session.rollback()
+        return Response("Issue updating client with ID {}".format(client_id), status=500, mimetype='text/plain')
+
+    if updated_client is None:
+        return Response("Issue updating client with ID {}".format(client_id), status=500, mimetype='text/plain')
+
+    dbs.session.flush()
+    return jsonify(updated_client.id)
 
 
 @cmr.route('/clients/<int:client_id>', methods=['DELETE'])
@@ -159,8 +188,32 @@ def get_client_convictions(client_id):
 
 @cmr.route('/clients/<int:client_id>/convictions', methods=['POST'])
 def add_client_conviction(client_id):
-    # return id
-    pass
+    client = models.Client.query.get(client_id)
+    if client is None:
+        return Response("Client with ID {} not found".format(client_id), status=404, mimetype='text/plain')
+
+    conviction = models.Conviction()
+    client.convictions.append(conviction)
+
+    if request.json:
+        try:
+            conviction.update(request.json)
+            dbs.session.add(conviction)
+            dbs.session.commit()
+            dbs.session.flush()
+            return jsonify(conviction.id)
+        except AttributeError as err:
+            dbs.session.rollback()
+            return Response("{}".format(err), status=422, mimetype='text/plain')
+        except Exception as err:
+            # this will have to work for now
+            dbs.session.rollback()
+            return Response("Issue adding new conviction for client {}".format(client_id), status=500, mimetype='text/plain')
+    else:
+        dbs.session.add(conviction)
+        dbs.session.commit()
+        dbs.session.flush()
+        return jsonify(conviction.id)
 
 
 @cmr.route('/convictions/<int:conviction_id>', methods=['GET'])
@@ -173,10 +226,38 @@ def get_conviction(conviction_id):
     return jsonify(result.data)
 
 
-@cmr.route('/convictions/<int:conviction_id>', methods=['POST'])
+@cmr.route('/convictions/<int:conviction_id>', methods=['PUT'])
 def update_conviction(conviction_id):
-    # return id
-    pass
+    if not request.json:
+        return Response('No JSON data', status=400, mimetype='test/plain')
+
+    conviction = models.Conviction.query.get(conviction_id)
+    if conviction is None:
+        return Response("Conviction with ID {} not found".format(conviction_id), status=404, mimetype='text/plain')
+
+    updated_conviction = None
+
+    try:
+        updated_conviction = conviction.update(request.json)
+        dbs.session.commit()
+    except AttributeError as err:
+        # not ideal, but works for now
+        dbs.session.rollback()
+        return Response("{}".format(err), status=422, mimetype='text/plain')
+    except exc.IntegrityError as err:
+        # Do better with this
+        dbs.session.rollback()
+        return Response("{}".format(err), status=400, mimetype='text/plain')
+    except Exception as err:
+        # this will have to work for now
+        dbs.session.rollback()
+        return Response("Issue updating conviction with ID {}".format(conviction_id), status=500, mimetype='text/plain')
+
+    if updated_conviction is None:
+        return Response("Issue updating client with ID {}".format(conviction_id), status=500, mimetype='text/plain')
+
+    dbs.session.flush()
+    return jsonify(updated_conviction.id)
 
 
 @cmr.route('/convictions/<int:conviction_id>', methods=['DELETE'])
@@ -197,8 +278,9 @@ def get_client_charges(client_id, conviction_id):
 
 @cmr.route('/clients/<int:client_id>/convictions/<int:conviction_id>/charges', methods=['POST'])
 def add_client_charges(client_id, conviction_id):
-    pass
-
+    client_convictions = models.Conviction.query.filter(models.Client.id==client_id and models.Conviction.id==conviction_id)
+    if client_convictions is None:
+        pass
 
 @cmr.route('/charges/<int:charge_id>', methods=['GET'])
 def get_charge(charge_id):
