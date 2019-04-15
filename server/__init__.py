@@ -19,7 +19,8 @@ api = Api(cmr)
 # having this import here is key to avoid circular imports as well as
 # being able to define  our API routes
 from clear_my_record_backend.server import models
-from clear_my_record_backend.server.core import resources, routes
+from clear_my_record_backend.server.core import routes
+from clear_my_record_backend.server.auth import resources
 
 api.add_resource(resources.Register, '/register')
 api.add_resource(resources.Login, '/login')
