@@ -4,7 +4,6 @@ from clear_my_record_backend.server.schemas import user_schema, client_schema, c
 from flask_jwt_extended import (jwt_required, create_access_token,
                                 get_jwt_identity)
 from flask_restful import Resource
-from webargs.flaskparser import use_args
 from sqlalchemy import exc
 from datetime import datetime
 
@@ -71,7 +70,7 @@ def update_user(user_id):
     try:
         updated_user = usr.update(request.json)
         dbs.session.commit()
-    except exc.InvalidRequestError as err:
+    except AttributeError as err:
         # not ideal, but works for now
         dbs.session.rollback()
         return Response("{}".format(err), status=422, mimetype='text/plain')
@@ -94,15 +93,34 @@ def update_user(user_id):
 
 @cmr.route('/clients', methods=['POST'])
 def add_client():
-    # return id
-    pass
+    client = models.Client()
+
+    if request.json:
+        try:
+            client.update(request.json)
+            dbs.session.add(client)
+            dbs.session.commit()
+            dbs.session.flush()
+            return jsonify(client.id)
+        except AttributeError as err:
+            dbs.session.rollback()
+            return Response("{}".format(err), status=422, mimetype='text/plain')
+        except Exception as err:
+            # this will have to work for now
+            dbs.session.rollback()
+            return Response("Issue adding new client", status=500, mimetype='text/plain')
+    else:
+        dbs.session.add(client)
+        dbs.session.commit()
+        dbs.session.flush()
+        return jsonify(client.id)
 
 
 @cmr.route('/clients', methods=['GET'])
 def get_clients():
     cli = models.Client.query.all()
     if cli is None:
-        return Response("Issue retreiving all clients".format(cli_id), status=404, mimetype='text/plain')
+        return Response("Issue retreiving all clients".format(cli), status=404, mimetype='text/plain')
     result = client_schema.dump(cli)
 
     return jsonify(result.data)
@@ -112,7 +130,7 @@ def get_clients():
 def get_client(client_id):
     cli = models.Client.query.get(client_id)
     if cli is None:
-        return Response("Client with ID {} not found".format(cli_id), status=404, mimetype='text/plain')
+        return Response("Client with ID {} not found".format(client_id), status=404, mimetype='text/plain')
     result = client_schema.dump(cli)
 
     return jsonify(result.data)
@@ -133,7 +151,7 @@ def delete_client(client_id):
 def get_client_convictions(client_id):
     client_convictions = models.Conviction.query.filter(models.Client.id==client_id).all()
     if client_convictions is None:
-        return Response("Could not find any convictions for Client {}".format(client_convictions, status=404, mimetype='text/plain'))
+        return Response("Could not find any convictions for Client {}".format(client_id, status=404, mimetype='text/plain'))
     result = convictions_schema.dump(client_convictions)
 
     return jsonify(result.data)
