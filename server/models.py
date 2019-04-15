@@ -57,11 +57,14 @@ class User(dbs.Model):
     def update(self, *data, **kwargs):
         for dictionary in data:
             for key in dictionary:
+                if not hasattr(self, key):
+                    raise AttributeError("{} is not a valid field.".format(key))
                 setattr(self, key, dictionary[key])
         for key in kwargs:
+            if not hasattr(self, key):
+                raise AttributeError("'{}' is not a valid field.".format(key))
             setattr(self, key, kwargs[key])
         return self
-
 
     def __repr__(self):
         return "<USER: {}>".format(self.username)
@@ -123,6 +126,18 @@ class Client(dbs.Model):
                 setattr(self, key, dictionary[key])
         for key in kwargs:
             setattr(self, key, kwargs[key])
+
+    def update(self, *data, **kwargs):
+        for dictionary in data:
+            for key in dictionary:
+                if not hasattr(self, key):
+                    raise AttributeError("{} is not a valid field".format(key))
+                setattr(self, key, dictionary[key])
+        for key in kwargs:
+            if not hasattr(self, key):
+                raise AttributeError("{} is not a valid field".format(key))
+            setattr(self, key, kwargs[key])
+        return self
 
 class Conviction(dbs.Model):
     id = dbs.Column(dbs.Integer, primary_key=True)
