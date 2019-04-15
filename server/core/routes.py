@@ -1,5 +1,6 @@
 from flask import request, Response, abort, jsonify
-from clear_my_record_backend.server import cmr, models, dbs
+from clear_my_record_backend.server.core import core_bp
+from clear_my_record_backend.server import models, dbs
 from clear_my_record_backend.server.schemas import user_schema, client_schema, clients_schema, conviction_schema, convictions_schema, charge_schema, charges_schema
 from flask_jwt_extended import (jwt_required, create_access_token,
                                 get_jwt_identity)
@@ -7,23 +8,24 @@ from flask_restful import Resource
 from sqlalchemy import exc
 from datetime import datetime
 
-@cmr.route('/')
-@cmr.route('/index')
+
+@core_bp.route('/')
+@core_bp.route('/index')
 def index():
     return "Hello, World!"
 
 
-@cmr.route('/qualifying_question', methods=['GET'])
+@core_bp.route('/qualifying_question', methods=['GET'])
 def qualifying_question():
     pass
 
 
-@cmr.route('/qualifying_questions', methods=['GET'])
+@core_bp.route('/qualifying_questions', methods=['GET'])
 def qualifying_questions():
     pass
 
 
-@cmr.route('/qualifying_answer', methods=['POST'])
+@core_bp.route('/qualifying_answer', methods=['POST'])
 def qualifying_answer():
     if not request.json:
         return Response('No JSON data', status=400, mimetype='test/plain')
@@ -44,7 +46,7 @@ def qualifying_answer():
     return Response('Success', status=200, mimetype='text/plain')
 
 
-@cmr.route('/users/<int:user_id>', methods=['GET'])
+@core_bp.route('/users/<int:user_id>', methods=['GET'])
 def get_user(user_id):
     usr = models.User.query.get(user_id)
     if usr is None:
@@ -54,7 +56,7 @@ def get_user(user_id):
     return jsonify(result.data)
 
 
-@cmr.route('/users/<int:user_id>', methods=['PUT'])
+@core_bp.route('/users/<int:user_id>', methods=['PUT'])
 def update_user(user_id):
     # is there a way to filter params like you can in rails?
     if not request.json:
@@ -91,7 +93,7 @@ def update_user(user_id):
     return jsonify(updated_user.id)
 
 
-@cmr.route('/clients', methods=['POST'])
+@core_bp.route('/clients', methods=['POST'])
 def add_client():
     client = models.Client()
 
@@ -116,7 +118,7 @@ def add_client():
         return jsonify(client.id)
 
 
-@cmr.route('/clients', methods=['GET'])
+@core_bp.route('/clients', methods=['GET'])
 def get_clients():
     cli = models.Client.query.all()
     if cli is None:
@@ -126,7 +128,7 @@ def get_clients():
     return jsonify(result.data)
 
 
-@cmr.route('/clients/<int:client_id>', methods=['GET'])
+@core_bp.route('/clients/<int:client_id>', methods=['GET'])
 def get_client(client_id):
     cli = models.Client.query.get(client_id)
     if cli is None:
@@ -136,7 +138,7 @@ def get_client(client_id):
     return jsonify(result.data)
 
 
-@cmr.route('/clients/<int:client_id>', methods=['PUT'])
+@core_bp.route('/clients/<int:client_id>', methods=['PUT'])
 def update_client(client_id):
     if not request.json:
         return Response('No JSON data', status=400, mimetype='test/plain')
@@ -171,12 +173,12 @@ def update_client(client_id):
     return jsonify(updated_client.id)
 
 
-@cmr.route('/clients/<int:client_id>', methods=['DELETE'])
+@core_bp.route('/clients/<int:client_id>', methods=['DELETE'])
 def delete_client(client_id):
     pass
 
 
-@cmr.route('/clients/<int:client_id>/convictions', methods=['GET'])
+@core_bp.route('/clients/<int:client_id>/convictions', methods=['GET'])
 def get_client_convictions(client_id):
     client_convictions = models.Conviction.query.filter(models.Client.id==client_id).all()
     if client_convictions is None:
@@ -186,7 +188,7 @@ def get_client_convictions(client_id):
     return jsonify(result.data)
 
 
-@cmr.route('/clients/<int:client_id>/convictions', methods=['POST'])
+@core_bp.route('/clients/<int:client_id>/convictions', methods=['POST'])
 def add_client_conviction(client_id):
     client = models.Client.query.get(client_id)
     if client is None:
@@ -216,7 +218,7 @@ def add_client_conviction(client_id):
         return jsonify(conviction.id)
 
 
-@cmr.route('/convictions/<int:conviction_id>', methods=['GET'])
+@core_bp.route('/convictions/<int:conviction_id>', methods=['GET'])
 def get_conviction(conviction_id):
     conviction = models.Conviction.query.get(conviction_id)
     if conviction is None:
@@ -226,7 +228,7 @@ def get_conviction(conviction_id):
     return jsonify(result.data)
 
 
-@cmr.route('/convictions/<int:conviction_id>', methods=['PUT'])
+@core_bp.route('/convictions/<int:conviction_id>', methods=['PUT'])
 def update_conviction(conviction_id):
     if not request.json:
         return Response('No JSON data', status=400, mimetype='test/plain')
@@ -260,13 +262,13 @@ def update_conviction(conviction_id):
     return jsonify(updated_conviction.id)
 
 
-@cmr.route('/convictions/<int:conviction_id>', methods=['DELETE'])
+@core_bp.route('/convictions/<int:conviction_id>', methods=['DELETE'])
 def delete_conviction(conviction_id):
     conviction = models.Conviction.query.get(conviction_id)
     pass
 
 
-@cmr.route('/clients/<int:client_id>/convictions/<int:conviction_id>/charges', methods=['GET'])
+@core_bp.route('/clients/<int:client_id>/convictions/<int:conviction_id>/charges', methods=['GET'])
 def get_client_charges(client_id, conviction_id):
     charges = models.Charge.query.filter(models.Client.id==client_id and models.Conviction.id==conviction_id).all()
     if charges is None:
@@ -276,13 +278,13 @@ def get_client_charges(client_id, conviction_id):
     return jsonify(result.data)
 
 
-@cmr.route('/clients/<int:client_id>/convictions/<int:conviction_id>/charges', methods=['POST'])
+@core_bp.route('/clients/<int:client_id>/convictions/<int:conviction_id>/charges', methods=['POST'])
 def add_client_charges(client_id, conviction_id):
     client_convictions = models.Conviction.query.filter(models.Client.id==client_id and models.Conviction.id==conviction_id)
     if client_convictions is None:
         pass
 
-@cmr.route('/charges/<int:charge_id>', methods=['GET'])
+@core_bp.route('/charges/<int:charge_id>', methods=['GET'])
 def get_charge(charge_id):
     charge = models.Charge.query.get(charge_id)
     if charge is None:
@@ -293,12 +295,12 @@ def get_charge(charge_id):
     return jsonify(result.data)
 
 
-@cmr.route('/charges/<int:charge_id>', methods=['PUT'])
+@core_bp.route('/charges/<int:charge_id>', methods=['PUT'])
 def update_charge(charge_id):
     pass
 
 
-@cmr.route('/charges/<int:charge_id>', methods=['DELETE'])
+@core_bp.route('/charges/<int:charge_id>', methods=['DELETE'])
 def delete_charge(charge_id):
     pass
 # don't forget to return id when doing post
