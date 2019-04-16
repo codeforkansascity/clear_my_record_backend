@@ -58,11 +58,14 @@ class User(dbs.Model):
         for dictionary in data:
             for key in dictionary:
                 if not hasattr(self, key):
-                    raise AttributeError("{} is not a valid field.".format(key))
-                setattr(self, key, dictionary[key])
+                    raise AttributeError("{} is not a valid field".format(key))
+                try:
+                    setattr(self, key, dictionary[key])
+                except AssertionError:
+                    raise AssertionError("{} is not a valid {}".format(dictionary[key], key))
         for key in kwargs:
             if not hasattr(self, key):
-                raise AttributeError("'{}' is not a valid field.".format(key))
+                raise AttributeError("{} is not a valid field".format(key))
             setattr(self, key, kwargs[key])
         return self
 
@@ -117,27 +120,23 @@ class Client(dbs.Model):
     convictions = dbs.relationship('Conviction', backref='client', lazy='dynamic')
     created_at = dbs.Column(dbs.DateTime, default=datetime.utcnow)
     updated_at = dbs.Column(dbs.DateTime, default=datetime.utcnow)
-    notes = dbs.Column(dbs.String)
-
-    def __init__(self, *data, **kwargs):
-        super(Client, self).__init__(**kwargs)
-        for dictionary in data:
-            for key in dictionary:
-                setattr(self, key, dictionary[key])
-        for key in kwargs:
-            setattr(self, key, kwargs[key])
+    notes = dbs.Column(dbs.Text)
 
     def update(self, *data, **kwargs):
         for dictionary in data:
             for key in dictionary:
                 if not hasattr(self, key):
                     raise AttributeError("{} is not a valid field".format(key))
-                setattr(self, key, dictionary[key])
+                try:
+                    setattr(self, key, dictionary[key])
+                except AssertionError:
+                    raise AssertionError("{} is not a valid {}".format(dictionary[key], key))
         for key in kwargs:
             if not hasattr(self, key):
                 raise AttributeError("{} is not a valid field".format(key))
             setattr(self, key, kwargs[key])
         return self
+
 
 class Conviction(dbs.Model):
     id = dbs.Column(dbs.Integer, primary_key=True)
@@ -168,7 +167,10 @@ class Conviction(dbs.Model):
             for key in dictionary:
                 if not hasattr(self, key):
                     raise AttributeError("{} is not a valid field".format(key))
-                setattr(self, key, dictionary[key])
+                try:
+                    setattr(self, key, dictionary[key])
+                except AssertionError:
+                    raise AssertionError("{} is not a valid {}".format(dictionary[key], key))
         for key in kwargs:
             if not hasattr(self, key):
                 raise AttributeError("{} is not a valid field".format(key))
@@ -181,8 +183,8 @@ class Charge(dbs.Model):
     charge = dbs.Column(dbs.String)
     citation = dbs.Column(dbs.String)
     sentence = dbs.Column(dbs.String)
-    class_type = dbs.Column(dbs.String)
-    charge_type = dbs.Column(dbs.String)
+    conviction_class_type = dbs.Column(dbs.String)
+    conviction_charge_type = dbs.Column(dbs.String)
     eligible = dbs.Column(dbs.Boolean)
     please_expunge = dbs.Column(dbs.Boolean)
     created_at = dbs.Column(dbs.DateTime, default=datetime.utcnow)
@@ -197,22 +199,25 @@ class Charge(dbs.Model):
         for key in kwargs:
             setattr(self, key, kwargs[key])
 
-    # @dbs.validates('class_type')
-    # def validate_class_type(self, key, class_type):
-    #     assert str(class_type).replace(' ', '_').upper() in class_types.__members__
-    #     return class_type
+    @dbs.validates('conviction_class_type')
+    def validate_class_type(self, key, class_type):
+        assert str(class_type).replace(' ', '_').upper() in class_types.__members__
+        return class_type
 
-    # @dbs.validates('charge_type')
-    # def validate_charge_type(self, key, charge_type):
-    #     assert str(charge_type).upper() in charge_types.__members__
-    #     return charge_type
+    @dbs.validates('conviction_charge_type')
+    def validate_charge_type(self, key, charge_type):
+        assert str(charge_type).upper() in charge_types.__members__
+        return charge_type
 
     def update(self, *data, **kwargs):
         for dictionary in data:
             for key in dictionary:
                 if not hasattr(self, key):
                     raise AttributeError("{} is not a valid field".format(key))
-                setattr(self, key, dictionary[key])
+                try:
+                    setattr(self, key, dictionary[key])
+                except AssertionError:
+                    raise AssertionError("{} is not a valid {}".format(dictionary[key], key))
         for key in kwargs:
             if not hasattr(self, key):
                 raise AttributeError("{} is not a valid field".format(key))

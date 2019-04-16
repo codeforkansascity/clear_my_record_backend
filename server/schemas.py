@@ -14,9 +14,8 @@ class ChargeSchema(ma.ModelSchema):
             'citation',
             'sentence',
             'eligible',
-            'conviction',
-            'charge_type',
-            'class_type'
+            'conviction_charge_type',
+            'conviction_class_type'
         )
 
 class ConvictionSchema(ma.ModelSchema):

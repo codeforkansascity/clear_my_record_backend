@@ -360,7 +360,7 @@ def update_charge(charge_id):
         return Response("IntegrityError: {}".format(err), status=400, mimetype='text/plain')
     except AssertionError as err:
         dbs.session.rollback()
-        return Reponse("AssertionError: {}".format(err), status=400, mimetype='text/plain')
+        return Response("AssertionError: {}".format(err), status=400, mimetype='text/plain')
     except Exception as err:
         # this will have to work for now
         dbs.session.rollback()
@@ -376,4 +376,3 @@ def update_charge(charge_id):
 @core_bp.route('/charges/<int:charge_id>', methods=['DELETE'])
 def delete_charge(charge_id):
     pass
-# don't forget to return id when doing post
