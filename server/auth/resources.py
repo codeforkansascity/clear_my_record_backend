@@ -3,8 +3,8 @@ from sqlalchemy.exc import SQLAlchemyError
 from flask_restful import Resource
 from flask_jwt_extended import (jwt_required, create_access_token,
                                 create_refresh_token, get_jwt_identity)
-from clear_my_record_backend.server.models import User
-from clear_my_record_backend.server.utils import save_to_dbs
+from server.models import User
+from server.utils import save_to_dbs
 
 
 class Register(Resource):

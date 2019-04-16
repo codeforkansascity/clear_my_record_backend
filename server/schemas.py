@@ -1,5 +1,5 @@
-from clear_my_record_backend.server import ma
-from clear_my_record_backend.server.models import *
+from server import ma
+from server.models import *
 
 
 class ChargeSchema(ma.ModelSchema):

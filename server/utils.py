@@ -1,4 +1,4 @@
-from clear_my_record_backend.server import dbs
+from server import dbs
 
 
 def save_to_dbs(entity):
