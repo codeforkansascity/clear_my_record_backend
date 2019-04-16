@@ -121,6 +121,23 @@ class Client(dbs.Model):
     created_at = dbs.Column(dbs.DateTime, default=datetime.utcnow)
     updated_at = dbs.Column(dbs.DateTime, default=datetime.utcnow)
     notes = dbs.Column(dbs.Text)
+    filing_court = dbs.Column(dbs.String)
+    judicial_ciruit_number = dbs.Column(dbs.String)
+    count_name = dbs.Column(dbs.String)
+    judge_name = dbs.Column(dbs.String)
+    division_name = dbs.Column(dbs.String)
+    petitioner_name = dbs.Column(dbs.String)
+    division_number = dbs.Column(dbs.String)
+    division_number = dbs.Column(dbs.String)
+    city_name_here = dbs.Column(dbs.String)
+    county_name = dbs.Column(dbs.String)
+    arresting_county = dbs.Column(dbs.String)
+    prosecuting_county = dbs.Column(dbs.String)
+    arresting_municipality = dbs.Column(dbs.String)
+    other_agencies_name = dbs.Column(dbs.Text)
+    created_by = dbs.Column(dbs.Integer)
+    modified_by = dbs.Column(dbs.Integer)
+    purged_by = dbs.Column(dbs.Integer)
 
     def update(self, *data, **kwargs):
         for dictionary in data:
@@ -153,6 +170,9 @@ class Conviction(dbs.Model):
     created_at = dbs.Column(dbs.DateTime, default=datetime.utcnow)
     updated_at = dbs.Column(dbs.DateTime, default=datetime.utcnow)
     notes = dbs.Column(dbs.Text)
+    name = dbs.Column(dbs.String)
+    arrest_date = dbs.Column(dbs.Date)
+    created_by = dbs.Column(dbs.String)
 
     def __init__(self, *data, **kwargs):
         super(Conviction, self).__init__(**kwargs)
@@ -190,6 +210,7 @@ class Charge(dbs.Model):
     created_at = dbs.Column(dbs.DateTime, default=datetime.utcnow)
     updated_at = dbs.Column(dbs.DateTime, default=datetime.utcnow)
     notes = dbs.Column(dbs.Text)
+    conviction_description = dbs.Column(dbs.String)
 
     def __init__(self, *data, **kwargs):
         super(Charge, self).__init__(**kwargs)
