@@ -17,10 +17,6 @@ class TestProdConfig(Config):
     SQLALCHEMY_DATABASE_URI = environ.get('TEST_DBS_URL')
 
 
-class ProdTestConfig(Config):
-    pass
-
-
 @pytest.fixture()
 def new_user():
     u = User(
@@ -48,6 +44,18 @@ def _cmr():
 def _dbs():
     cmr = create_app(TestConfig)
 
+    with cmr.app_context():
+        dbs.create_all()
+
+        yield dbs
+
+        dbs.session.remove()
+        dbs.drop_all()
+
+
+@pytest.fixture(scope="module")
+def prod_db():
+    cmr = create_app(TestProdConfig)
     with cmr.app_context():
         dbs.create_all()
 
