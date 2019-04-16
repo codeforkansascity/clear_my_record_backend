@@ -1,7 +1,7 @@
 from flask import request, Response, abort, jsonify
-from clear_my_record_backend.server.core import core_bp
-from clear_my_record_backend.server import models, dbs
-from clear_my_record_backend.server.schemas import user_schema, client_schema, clients_schema, conviction_schema, convictions_schema, charge_schema, charges_schema
+from server.core import core_bp
+from server import models, dbs
+from server.schemas import user_schema, client_schema, clients_schema, conviction_schema, convictions_schema, charge_schema, charges_schema
 from flask_jwt_extended import (jwt_required, create_access_token,
                                 get_jwt_identity)
 from flask_restful import Resource

@@ -1,4 +1,4 @@
-from clear_my_record_backend.server import dbs
+from server import dbs
 from werkzeug.security import generate_password_hash, check_password_hash
 from enum import Enum
 from datetime import datetime
