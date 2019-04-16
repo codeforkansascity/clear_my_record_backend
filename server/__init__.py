@@ -7,6 +7,16 @@ from flask_restful import Api
 from flask_jwt_extended import JWTManager
 from flask_marshmallow import Marshmallow
 
+# DO NOT REMOVE THIS UNUSED IMPORT!
+# ---------------------------------
+# marshmallow_sqlalchemy is an unused import but is needed by flask_marshmallow
+# and our requirements.txt tool, pigar, does not detect it as a
+# dependency. Inserting it here as a stub ensures Pigar sees it so we can
+# generate clean, production requirements.txt files.
+import marshmallow_sqlalchemy
+# ----------------------------------
+# DO NOT REMOVE THIS UNUSED IMPORT!
+
 dbs = SQLAlchemy()
 migrate = Migrate()
 ma = Marshmallow()
