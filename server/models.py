@@ -153,7 +153,7 @@ class Conviction(dbs.Model):
     charges = dbs.relationship('Charge', backref='conviction', lazy='dynamic')
     created_at = dbs.Column(dbs.DateTime, default=datetime.utcnow)
     updated_at = dbs.Column(dbs.DateTime, default=datetime.utcnow)
-    notes = dbs.Column(dbs.String)
+    notes = dbs.Column(dbs.Text)
 
     def __init__(self, *data, **kwargs):
         super(Conviction, self).__init__(**kwargs)
@@ -187,7 +187,7 @@ class Charge(dbs.Model):
     please_expunge = dbs.Column(dbs.Boolean)
     created_at = dbs.Column(dbs.DateTime, default=datetime.utcnow)
     updated_at = dbs.Column(dbs.DateTime, default=datetime.utcnow)
-    notes = dbs.Column(dbs.String)
+    notes = dbs.Column(dbs.Text)
 
     def __init__(self, *data, **kwargs):
         super(Charge, self).__init__(**kwargs)
@@ -197,14 +197,15 @@ class Charge(dbs.Model):
         for key in kwargs:
             setattr(self, key, kwargs[key])
 
-    @dbs.validates('class_type')
-    def validate_class_type(self, key, class_type):
-        assert str(class_type).replace(' ', '_').upper() in class_types.__members__
-        return class_type
+    # @dbs.validates('class_type')
+    # def validate_class_type(self, key, class_type):
+    #     assert str(class_type).replace(' ', '_').upper() in class_types.__members__
+    #     return class_type
 
     @dbs.validates('charge_type')
     def validate_charge_type(self, key, charge_type):
-        assert str(charge_type).replace(' ', '_').upper() in charge_types.__members__
+        print(type(charge_type))
+        assert str(charge_type).upper() in charge_types.__members__
         return charge_type
 
     def update(self, *data, **kwargs):
