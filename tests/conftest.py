@@ -1,13 +1,24 @@
 import pytest
 
-from clear_my_record_backend.config import Config
-from clear_my_record_backend.server.models import User
-from clear_my_record_backend.server import dbs, create_app
+from os import environ
+
+from config import Config
+from server import dbs, create_app
+from server.models import User
 
 
 class TestConfig(Config):
     TESTING = True
     SQLALCHEMY_DATABASE_URI = "sqlite://"
+
+
+class TestProdConfig(Config):
+    Testing = True
+    SQLALCHEMY_DATABASE_URI = environ.get('TEST_DBS_URL')
+
+
+class ProdTestConfig(Config):
+    pass
 
 
 @pytest.fixture()
@@ -21,10 +32,26 @@ def new_user():
 
 
 @pytest.fixture(scope="module")
-def app():
+def _cmr():
     cmr = create_app(TestConfig)
+
     with cmr.app_context():
         dbs.create_all()
+
         yield cmr
+
+        dbs.session.remove()
+        dbs.drop_all()
+
+
+@pytest.fixture(scope="module")
+def _dbs():
+    cmr = create_app(TestConfig)
+
+    with cmr.app_context():
+        dbs.create_all()
+
+        yield dbs
+
         dbs.session.remove()
         dbs.drop_all()
