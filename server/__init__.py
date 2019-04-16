@@ -1,5 +1,5 @@
 from flask import Flask
-from clear_my_record_backend.config import Config
+from config import Config
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_cors import CORS
@@ -24,10 +24,10 @@ def create_app(config_class=Config):
     cors.init_app(cmr)
     jwt.init_app(cmr)
 
-    from clear_my_record_backend.server.core import core_bp
+    from server.core import core_bp
     cmr.register_blueprint(core_bp)
 
-    from clear_my_record_backend.server.auth import auth_bp
+    from server.auth import auth_bp
 
     api = Api(auth_bp)
     api.add_resource(resources.Register, '/register')
@@ -40,7 +40,7 @@ def create_app(config_class=Config):
 
 # having this import here is key to avoid circular imports as well as
 # being able to define  our API routes
-from clear_my_record_backend.server import models
+from server import models
 # from clear_my_record_backend.server.core import routes
 
-from clear_my_record_backend.server.auth import resources
+from server.auth import resources
