@@ -202,11 +202,10 @@ class Charge(dbs.Model):
     #     assert str(class_type).replace(' ', '_').upper() in class_types.__members__
     #     return class_type
 
-    @dbs.validates('charge_type')
-    def validate_charge_type(self, key, charge_type):
-        print(type(charge_type))
-        assert str(charge_type).upper() in charge_types.__members__
-        return charge_type
+    # @dbs.validates('charge_type')
+    # def validate_charge_type(self, key, charge_type):
+    #     assert str(charge_type).upper() in charge_types.__members__
+    #     return charge_type
 
     def update(self, *data, **kwargs):
         for dictionary in data:

@@ -98,6 +98,11 @@ def add_client():
     client = models.Client()
 
     if request.json:
+        if "dob" in request.json:
+            request.json["dob"] = datetime.strptime(request.json["dob"], '%Y-%m-%d').date()
+
+        if "license_expiration_date" in request.json:
+            request.json["license_expiration_date"] = datetime.strptime(request.json["license_expiration_date"], '%Y-%m-%d').date()
         try:
             client.update(request.json)
             dbs.session.add(client)
@@ -150,6 +155,12 @@ def update_client(client_id):
 
     updated_client = None
 
+    if "dob" in request.json:
+        request.json["dob"] = datetime.strptime(request.json["dob"], '%Y-%m-%d').date()
+
+    if "license_expiration_date" in request.json:
+        request.json["license_expiration_date"] = datetime.strptime(request.json["license_expiration_date"], '%Y-%m-%d').date()
+
     try:
         updated_client = client.update(request.json)
         dbs.session.commit()
@@ -198,6 +209,8 @@ def add_client_conviction(client_id):
     client.convictions.append(conviction)
 
     if request.json:
+        if "release_date" in request.json:
+            request.json["release_date"] = datetime.strptime(request.json["dob"], '%Y-%m-%d').date()
         try:
             conviction.update(request.json)
             dbs.session.add(conviction)
@@ -236,6 +249,9 @@ def update_conviction(conviction_id):
     conviction = models.Conviction.query.get(conviction_id)
     if conviction is None:
         return Response("Conviction with ID {} not found".format(conviction_id), status=404, mimetype='text/plain')
+
+    if "release_date" in request.json:
+        request.json["release_date"] = datetime.strptime(request.json["dob"], '%Y-%m-%d').date()
 
     updated_conviction = None
 
@@ -307,6 +323,7 @@ def add_client_charges(client_id, conviction_id):
         dbs.session.commit()
         dbs.session.flush()
         return jsonify(charge.id)
+
 
 @core_bp.route('/charges/<int:charge_id>', methods=['GET'])
 def get_charge(charge_id):

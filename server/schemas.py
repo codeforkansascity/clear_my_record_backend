@@ -13,8 +13,6 @@ class ChargeSchema(ma.ModelSchema):
             'charge',
             'citation',
             'sentence',
-            'class_type',
-            'charge_type',
             'eligible',
             'conviction',
             'charge_type',
@@ -68,9 +66,7 @@ class ClientSchema(ma.Schema):
             'license_expiration_date',
             'status',
             'active',
-            'user',
             'user_id',
-            'convictions',
         )
 
 class UserSchema(ma.ModelSchema):
