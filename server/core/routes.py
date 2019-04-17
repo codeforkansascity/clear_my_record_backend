@@ -210,7 +210,7 @@ def add_client_conviction(client_id):
 
     if request.json:
         if "release_date" in request.json:
-            request.json["release_date"] = datetime.strptime(request.json["dob"], '%Y-%m-%d').date()
+            request.json["release_date"] = datetime.strptime(request.json["release_date"], '%Y-%m-%d').date()
         try:
             conviction.update(request.json)
             dbs.session.add(conviction)
