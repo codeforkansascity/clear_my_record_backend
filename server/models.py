@@ -139,7 +139,7 @@ class Client(dbs.Model):
     purged_by = dbs.Column(dbs.Integer)
 
     def __init__(self, *data, **kwargs):
-        super(User, self).__init__(**kwargs)
+        super(Client, self).__init__(**kwargs)
         for dictionary in data:
             for key in dictionary:
                 setattr(self, key, dictionary[key])
