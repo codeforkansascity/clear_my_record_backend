@@ -310,7 +310,7 @@ def add_client_charges(client_id, conviction_id):
 
     if request.json:
         try:
-            update.update(request.json)
+            charge.update(request.json)
             dbs.session.add(charge)
             dbs.session.commit()
             dbs.session.flush()
