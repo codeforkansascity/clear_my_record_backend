@@ -98,6 +98,11 @@ def add_client():
     client = models.Client()
 
     if request.json:
+        if "dob" in request.json:
+            request.json["dob"] = datetime.strptime(request.json["dob"], '%Y-%m-%d').date()
+
+        if "license_expiration_date" in request.json:
+            request.json["license_expiration_date"] = datetime.strptime(request.json["license_expiration_date"], '%Y-%m-%d').date()
         try:
             client.update(request.json)
             dbs.session.add(client)
@@ -150,6 +155,12 @@ def update_client(client_id):
 
     updated_client = None
 
+    if "dob" in request.json:
+        request.json["dob"] = datetime.strptime(request.json["dob"], '%Y-%m-%d').date()
+
+    if "license_expiration_date" in request.json:
+        request.json["license_expiration_date"] = datetime.strptime(request.json["license_expiration_date"], '%Y-%m-%d').date()
+
     try:
         updated_client = client.update(request.json)
         dbs.session.commit()
@@ -198,6 +209,8 @@ def add_client_conviction(client_id):
     client.convictions.append(conviction)
 
     if request.json:
+        if "release_date" in request.json:
+            request.json["release_date"] = datetime.strptime(request.json["release_date"], '%Y-%m-%d').date()
         try:
             conviction.update(request.json)
             dbs.session.add(conviction)
@@ -237,6 +250,9 @@ def update_conviction(conviction_id):
     if conviction is None:
         return Response("Conviction with ID {} not found".format(conviction_id), status=404, mimetype='text/plain')
 
+    if "release_date" in request.json:
+        request.json["release_date"] = datetime.strptime(request.json["dob"], '%Y-%m-%d').date()
+
     updated_conviction = None
 
     try:
@@ -256,7 +272,7 @@ def update_conviction(conviction_id):
         return Response("Issue updating conviction with ID {}".format(conviction_id), status=500, mimetype='text/plain')
 
     if updated_conviction is None:
-        return Response("Issue updating client with ID {}".format(conviction_id), status=500, mimetype='text/plain')
+        return Response("Issue updating conviction with ID {}".format(conviction_id), status=500, mimetype='text/plain')
 
     dbs.session.flush()
     return jsonify(updated_conviction.id)
@@ -280,9 +296,34 @@ def get_client_charges(client_id, conviction_id):
 
 @core_bp.route('/clients/<int:client_id>/convictions/<int:conviction_id>/charges', methods=['POST'])
 def add_client_charges(client_id, conviction_id):
-    client_convictions = models.Conviction.query.filter(models.Client.id==client_id and models.Conviction.id==conviction_id)
-    if client_convictions is None:
-        pass
+    client_conviction = models.Conviction.query.filter(models.Client.id==client_id and models.Conviction.id==conviction_id).first()
+    print(client_conviction)
+    if client_conviction is None:
+        return Response("Could not find conviction {} for client {}".format(conviction_id, client_id), status=404, mimetype='text/plain')
+
+    charge = models.Charge()
+    client_conviction.charges.append(charge)
+
+    if request.json:
+        try:
+            update.update(request.json)
+            dbs.session.add(charge)
+            dbs.session.commit()
+            dbs.session.flush()
+            return jsonify(charge.id)
+        except AttributeError as err:
+            dbs.session.rollback()
+            return Response("{}".format(err), status=422, mimetype='text/plain')
+        except Exception as err:
+            # this will have to work for now
+            dbs.session.rollback()
+            return Response("Issue adding new charge to conviction {} for client {}".format(conviction_id, client_id), status=500, mimetype='text/plain')
+    else:
+        dbs.session.add(charge)
+        dbs.session.commit()
+        dbs.session.flush()
+        return jsonify(charge.id)
+
 
 @core_bp.route('/charges/<int:charge_id>', methods=['GET'])
 def get_charge(charge_id):
@@ -297,10 +338,41 @@ def get_charge(charge_id):
 
 @core_bp.route('/charges/<int:charge_id>', methods=['PUT'])
 def update_charge(charge_id):
-    pass
+    if not request.json:
+        return Response('No JSON data', status=400, mimetype='test/plain')
+
+    charge = models.Charge.query.get(charge_id)
+    if charge is None:
+        return Response("Charge with ID {} not found".format(charge_id), status=404, mimetype='text/plain')
+
+    updated_charge = None
+
+    try:
+        updated_charge = charge.update(request.json)
+        dbs.session.commit()
+    except AttributeError as err:
+        # not ideal, but works for now
+        dbs.session.rollback()
+        return Response("AttributeError: {}".format(err), status=422, mimetype='text/plain')
+    except exc.IntegrityError as err:
+        # Do better with this
+        dbs.session.rollback()
+        return Response("IntegrityError: {}".format(err), status=400, mimetype='text/plain')
+    except AssertionError as err:
+        dbs.session.rollback()
+        return Response("AssertionError: {}".format(err), status=400, mimetype='text/plain')
+    except Exception as err:
+        # this will have to work for now
+        dbs.session.rollback()
+        return Response("Issue updating charge with ID {}".format(charge_id), status=500, mimetype='text/plain')
+
+    if updated_charge is None:
+        return Response("Issue updating charge with ID {}".format(charge_id), status=500, mimetype='text/plain')
+
+    dbs.session.flush()
+    return jsonify(updated_charge.id)
 
 
 @core_bp.route('/charges/<int:charge_id>', methods=['DELETE'])
 def delete_charge(charge_id):
     pass
-# don't forget to return id when doing post
