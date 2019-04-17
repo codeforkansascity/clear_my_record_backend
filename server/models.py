@@ -122,12 +122,11 @@ class Client(dbs.Model):
     updated_at = dbs.Column(dbs.DateTime, default=datetime.utcnow)
     notes = dbs.Column(dbs.Text)
     filing_court = dbs.Column(dbs.String)
-    judicial_ciruit_number = dbs.Column(dbs.String)
-    count_name = dbs.Column(dbs.String)
+    judicial_circuit_number = dbs.Column(dbs.String)
+    county_of_prosecutor = dbs.Column(dbs.String)
     judge_name = dbs.Column(dbs.String)
     division_name = dbs.Column(dbs.String)
     petitioner_name = dbs.Column(dbs.String)
-    division_number = dbs.Column(dbs.String)
     division_number = dbs.Column(dbs.String)
     city_name_here = dbs.Column(dbs.String)
     county_name = dbs.Column(dbs.String)
@@ -138,6 +137,14 @@ class Client(dbs.Model):
     created_by = dbs.Column(dbs.Integer)
     modified_by = dbs.Column(dbs.Integer)
     purged_by = dbs.Column(dbs.Integer)
+
+    def __init__(self, *data, **kwargs):
+        super(User, self).__init__(**kwargs)
+        for dictionary in data:
+            for key in dictionary:
+                setattr(self, key, dictionary[key])
+        for key in kwargs:
+            setattr(self, key, kwargs[key])
 
     def update(self, *data, **kwargs):
         for dictionary in data:

@@ -15,7 +15,11 @@ class ChargeSchema(ma.ModelSchema):
             'sentence',
             'eligible',
             'conviction_charge_type',
-            'conviction_class_type'
+            'conviction_class_type',
+            'eligible',
+            'please_expunge',
+            'notes',
+            'conviction_description'
         )
 
 class ConvictionSchema(ma.ModelSchema):
@@ -28,7 +32,6 @@ class ConvictionSchema(ma.ModelSchema):
         fields = (
             'id',
             'client_id',
-            'client',
             'case_number',
             'agency',
             'court_name',
@@ -37,7 +40,9 @@ class ConvictionSchema(ma.ModelSchema):
             'record_name',
             'release_status',
             'release_date',
-            'charges'
+            'notes',
+            'name',
+            'arrest_date',
         )
 
 class ClientSchema(ma.Schema):
@@ -66,6 +71,20 @@ class ClientSchema(ma.Schema):
             'status',
             'active',
             'user_id',
+            'notes',
+            'filing_court',
+            'judicial_circuit_number',
+            'county_of_prosecutor',
+            'judge_name',
+            'division_name',
+            'division_name',
+            'petitioner_name',
+            'division_number',
+            'city_name_here',
+            'county_name',
+            'arresting_county',
+            'arresting_municipality',
+            'other_agencies_name',
         )
 
 class UserSchema(ma.ModelSchema):
@@ -73,7 +92,7 @@ class UserSchema(ma.ModelSchema):
 
     class Meta:
         model = User
-        fields = ('id', 'username', 'clients', 'user_type')
+        fields = ('id', 'username', 'clients')
 
 # schema instantiation for routes.py
 user_schema = UserSchema()
