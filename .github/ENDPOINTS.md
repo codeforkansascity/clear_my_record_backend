@@ -2,7 +2,7 @@
 Get a user by ID
 
 #### RETURNS
-200 - JSON
+```
 {
   id,
     username,
@@ -15,12 +15,14 @@ Get a user by ID
         ],
       }
 }
+```
 
 # PUT - /users/<int:user_id>
 Update a user by ID
 
 #### OPTIONAL PARAMS
 
+```
 full_name - String
 phone - VARCHAR(12)
 email - String
@@ -55,6 +57,7 @@ other_agencies_name - Text
 created_by - Integer
 modified_by - Integer
 purged_by - Integer
+```
 
 #### RETURNS
 client_id
@@ -64,6 +67,7 @@ Create a client
 
 #### OPTIONAL PARAMS
 
+```
 full_name - String
 phone - VARCHAR(12)
 email - String
@@ -98,6 +102,7 @@ other_agencies_name - Text
 created_by - Integer
 modified_by - Integer
 purged_by - Integer
+```
 
 #### RETURNS
 
@@ -107,6 +112,7 @@ purged_by - Integer
 Return all clients
 
 #### RETURNS
+```
 [
   {
       'id',
@@ -143,12 +149,13 @@ Return all clients
       'other_agencies_name',
    },
 ]
+```
 
 # - GET - /clients/<int:client_id>
 Get a client by ID
 
 #### RETURNS
-
+```
 {
   'id',
   'full_name',
@@ -182,12 +189,14 @@ Get a client by ID
   'arresting_municipality',
   'other_agencies_name',
 }
+```
 
 # PUT - /clients/<int:client_id>
 Update a client by ID
 
 #### OPTIONAL PARAMS
 
+```
 full_name - String
 phone - VARCHAR(12)
 email - String
@@ -221,6 +230,7 @@ other_agencies_name - Text
 created_by - Integer
 modified_by - Integer
 purged_by - Integer
+```
 
 #### RETURNS
 200 - client_id
@@ -232,6 +242,7 @@ Undefined
 Get a list of client convictions
 
 #### RETURNS
+```
 [
   {
     'id',
@@ -249,13 +260,15 @@ Get a list of client convictions
     'arrest_date',
   },
 ]
+```
 
 # POST - /clients/<int:client_id>/convictions
 Create a client conviction
 
 #### OPTIONAL PARAMS
+```
 case_number - String
-agency 0 String
+agency - String
 court_name- String
 court_city_county - String
 judge - String
@@ -266,6 +279,7 @@ notes - Text
 name - String
 arrest_date - Date
 created_by - String
+```
 
 #### RETURNS
 conviction_id
@@ -274,6 +288,7 @@ conviction_id
 Get a conviction by ID
 
 #### RETURNS
+```
 {
   'id',
   'client_id',
@@ -289,13 +304,15 @@ Get a conviction by ID
   'name',
   'arrest_date',
 }
+```
 
 # PUT - /convictions/<int:conviction_id>
 Update a conviction by ID
 
 #### OPTIONAL PARAMS
+```
 case_number - String
-agency 0 String
+agency - String
 court_name- String
 court_city_county - String
 judge - String
@@ -306,6 +323,8 @@ notes - Text
 name - String
 arrest_date - Date
 created_by - String
+```
+
 
 #### RETURNS
 conviction_id
@@ -317,6 +336,7 @@ Undefined
 Get a list of a client's conviction charges
 
 #### RETURNS
+```
 [
   {
     'id',
@@ -333,11 +353,13 @@ Get a list of a client's conviction charges
     'conviction_description'
   }
 ]
+```
 
 # POST - /clients/<int:client_id>/convictions/<int:conviction_id>/charges
 Create a new charge
 
 #### OPTIONAL PARAMS
+```
 charge - String
 citation - String)
 sentence - String)
@@ -349,6 +371,7 @@ eligible - Boolean
 please_expunge - Boolean
 notes - Text
 conviction_description - String
+```
 
 #### RETURNS
 charge_id
@@ -357,6 +380,7 @@ charge_id
 Get a charge by ID
 
 #### RETURNS
+```
 {
   'id',
   'conviction_id',
@@ -371,14 +395,16 @@ Get a charge by ID
   'notes',
   'conviction_description'
 }
+```
 
 # PUT - '/charges/<int:charge_id>
 Update a charge by ID
 
 #### OPTIONAL PARAMS
+```
 charge - String
-citation - String)
-sentence - String)
+citation - String
+sentence - String
 conviction_class_type - String
   ONE OF [A,B,C,D,E,UNDEFINED']
 conviction_charge_type - String
@@ -387,6 +413,7 @@ eligible - Boolean
 please_expunge - Boolean
 notes - Text
 conviction_description - String
+```
 
 #### RETURNS
 charge_id
