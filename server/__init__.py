@@ -35,7 +35,8 @@ def create_app(config_class=Config):
     jwt.init_app(cmr)
 
     from server.core import core_bp
-    cmr.register_blueprint(core_bp)
+
+    cmr.register_blueprint(core_bp, url_prefix="/api")
 
     from server.auth import auth_bp
 
@@ -44,7 +45,7 @@ def create_app(config_class=Config):
     api.add_resource(resources.Login, '/login')
     api.add_resource(resources.Me, '/me')
 
-    cmr.register_blueprint(auth_bp)
+    cmr.register_blueprint(auth_bp, url_prefix="/api")
 
     return cmr
 
