@@ -211,8 +211,8 @@ def add_client_conviction(client_id):
     if request.json:
         if "release_date" in request.json:
             request.json["release_date"] = datetime.strptime(request.json["release_date"], '%Y-%m-%d').date()
-        if "arrest_date" in request.json:
-            request.json["arrest_date"] = datetime.strptime(request.json["arrest_date"], '%Y-%m-%d').date()   
+        # if "arrest_date" in request.json:
+            # request.json["arrest_date"] = datetime.strptime(request.json["arrest_date"], '%Y-%m-%d').date()
         try:
             conviction.update(request.json)
             dbs.session.add(conviction)
@@ -254,8 +254,8 @@ def update_conviction(conviction_id):
 
     if "release_date" in request.json:
         request.json["release_date"] = datetime.strptime(request.json["release_date"], '%Y-%m-%d').date()
-    if "arrest_date" in request.json:
-        request.json["arrest_date"] = datetime.strptime(request.json["arrest_date"], '%Y-%m-%d').date()
+    # if "arrest_date" in request.json:
+        # request.json["arrest_date"] = datetime.strptime(request.json["arrest_date"], '%Y-%m-%d').date()
 
     updated_conviction = None
 

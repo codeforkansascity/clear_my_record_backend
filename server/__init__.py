@@ -18,7 +18,7 @@ import marshmallow_sqlalchemy
 # DO NOT REMOVE THIS UNUSED IMPORT!
 
 dbs = SQLAlchemy()
-migrate = Migrate()
+migrate = Migrate(compare_type=True)
 ma = Marshmallow()
 cors = CORS()
 jwt = JWTManager()
