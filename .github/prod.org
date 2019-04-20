@@ -193,7 +193,7 @@
    6. run the back-end
 
       #+BEGIN_SRC sh
-        sudo supervisorctl reload
+        sudo supervisorctl reload cmr_app
       #+END_SRC
 
       
