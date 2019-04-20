@@ -1,0 +1,199 @@
+* Setting up on production
+
+** assumptions
+   
+   might be nice to write documentation for these things as well, but for now
+   here's just a (non-exhaustive) list of the things you need for any of this
+   to really work:
+
+   1. nginx is set up and running
+      - nginx is installed
+   2. nginx has a configuration to serve cmr and it is enabled
+   3. domain is properly configured
+      - i.e. dns and ssl adjacent things are running
+   4. there exists a directory =/web/cmr_nuxt/= off of root.
+      - we have a =web-data= group, and it owns =/web=
+      - your given user is a part of this group and owns =/web/cmr_nuxt/=
+      - inside of this directory, there is =www/= and =logs/= sub-directories
+   5. python3 (3.6.5, specifically) is available on the system
+      - all system dependencies to use the packages in =requirements.txt= are
+        installed.
+   6. we are ignoring questions of how the database is setup
+   7. if you ever see me use notation =<value_of_some_type>=, I always mean it
+      as a variable for you to substitute as appropriate.
+
+*** mea culpa
+    
+    We are not doing best practices for a few things on deployment as of this
+    writing. The primary concerns as of right now are to just get this running
+    and working securely.
+
+** uploading [[https://github.com/codeforkansascity/clear-my-record-front-end-nuxt][front-end]] to server
+
+   1. Update =baseURL= in =nuxt.config.js= to:
+
+      #+BEGIN_SRC js
+        baseURL: 'https://cmr-app.codeforkc.org/api'
+      #+END_SRC
+
+   2. Build the website
+
+      #+BEGIN_SRC sh
+        npm run build
+      #+END_SRC
+
+      This will produce a directory called =dist/= in your project
+      directory. This is what we are uploading to the server.
+
+   3. Copy to the server using =sftp=
+      
+      1. on local, while in the root of the front-end project, login:
+
+         #+BEGIN_SRC sh
+           sftp <user>@<server_api>
+         #+END_SRC
+
+      2. copy the contents from local to your home on remote:
+
+         #+BEGIN_SRC sh
+           put -r dist/
+         #+END_SRC
+
+         This will put =dist/= in your home directory on the server. =sftp=
+         will give you a progress report on uploading the files which should
+         happen fairly quickly. Once done, exit with the command =exit=.
+
+      3. =cp= the newly built website  =web/cmr_nuxt/www=.
+
+         It is critically to make sure we copy =dist/= such that it /becomes/
+         =web/cmr_nuxt/www/=, *not* copied to inside of it,
+         i.e. =/web/cmr_nuxt/www/dist=
+
+         To do this without room for error, simply delete the current website
+         residing in =/web/cmr_nuxt/www= via:
+         
+         #+BEGIN_SRC sh
+           rm -r /web/cmr_nuxt/www
+         #+END_SRC
+
+         You will probably need =sudo= for this. Then copy =dist/= from home
+         over to =web/=:
+         
+         #+BEGIN_SRC sh
+           cp -r dist/ /web/cmr_nuxt/www
+         #+END_SRC
+
+   4. restart nginx so that it serves the new website:
+
+      #+BEGIN_SRC 
+        sudo systemctl restart nginx
+      #+END_SRC
+
+     
+** setting up back-end on server
+   
+   1. clone the repository onto the server and enter its root
+
+      #+BEGIN_SRC sh
+        git clone https://github.com/codeforkansascity/clear_my_record_backend.git
+        cd clear_my_record_backend/
+      #+END_SRC
+
+   2. create a virtual environment for the project
+      #+BEGIN_SRC 
+        python3 -m venv venv
+      #+END_SRC
+
+      This will create a =venv/= folder that you will need to source to
+      properly install the project in such a way to sandbox it from the
+      server's version of python and python modules. We will also be using the
+      binaries installed in here when when running the server as a background
+      job later.
+
+      To activate this venv:
+
+      #+BEGIN_SRC sh
+        source venv/bin/activate
+      #+END_SRC
+
+      To deactivate:
+      #+BEGIN_SRC sh
+        deactivate
+      #+END_SRC
+
+   3. update and installing dependencies
+
+      1. activate the venv
+
+      2. update
+
+         #+BEGIN_SRC sh
+           pip install -U pip
+         #+END_SRC
+
+      3. install non-project specific dependencies:
+
+         #+BEGIN_SRC sh
+           pip install wheel gunicorn supervisor
+         #+END_SRC
+
+      4. install project specific dependencies:
+
+         #+BEGIN_SRC sh
+           pip install -r requirements.txt
+         #+END_SRC
+
+   4. run the application as a background job
+
+      Flask itself does not work very well at scale as a server and that is
+      where [[https://gunicorn.org/][Gunicorn]] comes in as a WSGI HTTP server. It will run workers that
+      listen for requests and handle them accordingly.
+
+      Similarly, we want to run the application as a system process on the
+      server. If something crashes, whether the application or the server, we
+      want it to start automatically and we would like to keep a track of
+      logs. Thus enters [[http://supervisord.org/][supervisor]].
+
+      We will now get these things setup.
+
+      1. make a log file for gunicorn in the project root:
+
+         #+BEGIN_SRC sh
+           mkdir logs/gunicorn
+         #+END_SRC
+
+      2. make a supervisor job
+
+         We can make job confs inside of =/etc/supervisor/conf.d/= that
+         we can tell supervisor to run. We will name ours =cmr_app.conf=.
+
+         #+BEGIN_SRC conf
+           # /etc/supervisor/conf.d/cmr_app.conf
+           [program:cmr_app]
+           command=/home/<user>/clear_my_record_backend/venv/bin/gunicorn -b localhost:8000 -w 4 cmr_app:cmr
+           directory=/home/<user>/clear_my_record_backend/
+           user=<user>
+           stdout_logfile = /home/<user>/clear_my_record_backend/logs/gunicorn/gunicorn_stdout.log
+           stderr_logfile = /home/<user>/clear_my_record_backend/logs/gunicorn/gunicorn_stderr.log
+           autostart=true
+           stopasgroup=true
+           killasgroup=true
+         #+END_SRC
+
+   5. initialize the database
+
+      #+BEGIN_SRC sh
+        export FLASK_APP=cmr_app.py
+        flask db upgrade
+      #+END_SRC
+
+      Recall the assumptions above: currently assume database stuff is all
+      known and setup as of now.
+         
+   6. run the back-end
+
+      #+BEGIN_SRC sh
+        sudo supervisorctl reload
+      #+END_SRC
+
+      
