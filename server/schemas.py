@@ -19,7 +19,8 @@ class ChargeSchema(ma.ModelSchema):
             'eligible',
             'please_expunge',
             'notes',
-            'conviction_description'
+            'conviction_description',
+            'to_print'
         )
 
 class ConvictionSchema(ma.ModelSchema):
@@ -85,6 +86,7 @@ class ClientSchema(ma.Schema):
             'arresting_county',
             'arresting_municipality',
             'other_agencies_name',
+            'cms_case_number'
         )
 
 class UserSchema(ma.ModelSchema):
