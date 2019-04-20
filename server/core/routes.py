@@ -209,7 +209,7 @@ def add_client_conviction(client_id):
     client.convictions.append(conviction)
 
     if request.json:
-        if "release_date" in request.json:
+        if "release_date" in request.json and request.json["release_date"] is not None:
             request.json["release_date"] = datetime.strptime(request.json["release_date"], '%Y-%m-%d').date()
         if "arrest_date" in request.json:
             request.json["arrest_date"] = datetime.strptime(request.json["arrest_date"], '%Y-%m-%d').date()   
@@ -252,7 +252,7 @@ def update_conviction(conviction_id):
     if conviction is None:
         return Response("Conviction with ID {} not found".format(conviction_id), status=404, mimetype='text/plain')
 
-    if "release_date" in request.json:
+    if "release_date" in request.json and request.json["release_date"] is not None:
         request.json["release_date"] = datetime.strptime(request.json["release_date"], '%Y-%m-%d').date()
     if "arrest_date" in request.json:
         request.json["arrest_date"] = datetime.strptime(request.json["arrest_date"], '%Y-%m-%d').date()
