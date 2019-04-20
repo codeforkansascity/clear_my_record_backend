@@ -1,0 +1,83 @@
+* Setting up on production
+
+Assumptions:
+
+** assumptions
+   
+   might be nice to write documentation for these things as well, but for now
+   here's just a (non-exhaustive) list of the things you need for any of this
+   to really work:
+
+   1. nginx is set up and running
+      - nginx is installed
+   2. nginx has a configuration to serve cmr and it is enabled
+   3. domain is properly configured
+      - i.e. dns and ssl adjacent things are running
+   4. there exists a directory =/web/cmr_nuxt/= off of root.
+      - we have a =web-data= group, and it owns =/web=
+      - your given user is a part of this group and owns =/web/cmr_nuxt/=
+      - inside of this directory, there is =www/= and =logs/= sub-directories
+   5. python3 (3.6.5, specifically) is available on the system
+
+** uploading [[https://github.com/codeforkansascity/clear-my-record-front-end-nuxt][front-end]] to server
+
+   1. Update =baseURL= in =nuxt.config.js= to:
+
+      #+BEGIN_SRC js
+        baseURL: 'https://cmr-app.codeforkc.org/api'
+      #+END_SRC
+
+   2. Build the website
+
+      #+BEGIN_SRC sh
+        npm run build
+      #+END_SRC
+
+      This will produce a directory called =dist/= in your project
+      directory. This is what we are uploading to the server.
+
+   3. Copy to the server using =sftp=
+      
+      1. on local, while in the root of the front-end project, login:
+
+         #+BEGIN_SRC sh
+           sftp <user>@<server_api>
+         #+END_SRC
+
+      2. copy the contents from local to your home on remote:
+
+         #+BEGIN_SRC sh
+           put -r dist/
+         #+END_SRC
+
+         This will put =dist/= in your home directory on the server. =sftp=
+         will give you a progress report on uploading the files which should
+         happen fairly quickly. Once done, exit with the command =exit=.
+
+      3. =cp= the newly built website  =web/cmr_nuxt/www=.
+
+         It is critically to make sure we copy =dist/= such that it /becomes/
+         =web/cmr_nuxt/www/=, *not* copied to inside of it,
+         i.e. =/web/cmr_nuxt/www/dist=
+
+         To do this without room for error, simply delete the current website
+         residing in =/web/cmr_nuxt/www= via:
+         
+         #+BEGIN_SRC sh
+           rm -r /web/cmr_nuxt/www
+         #+END_SRC
+
+         You will probably need =sudo= for this. Then copy =dist/= from home
+         over to =web/=:
+         
+         #+BEGIN_SRC sh
+           cp -r dist/ /web/cmr_nuxt/www
+         #+END_SRC
+
+   4. restart nginx so that it serves the new website:
+
+      #+BEGIN_SRC 
+        sudo systemctl restart nginx
+      #+END_SRC
+
+     
