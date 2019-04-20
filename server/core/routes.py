@@ -98,10 +98,10 @@ def add_client():
     client = models.Client()
 
     if request.json:
-        if "dob" in request.json:
+        if "dob" in request.json and request.json["dob"] is not None:
             request.json["dob"] = datetime.strptime(request.json["dob"], '%Y-%m-%d').date()
 
-        if "license_expiration_date" in request.json:
+        if "license_expiration_date" in request.json and request.json["license_expiration_date"] is not None:
             request.json["license_expiration_date"] = datetime.strptime(request.json["license_expiration_date"], '%Y-%m-%d').date()
         try:
             client.update(request.json)
@@ -155,10 +155,10 @@ def update_client(client_id):
 
     updated_client = None
 
-    if "dob" in request.json:
+    if "dob" in request.json and request.json["dob"] is not None:
         request.json["dob"] = datetime.strptime(request.json["dob"], '%Y-%m-%d').date()
 
-    if "license_expiration_date" in request.json:
+    if "license_expiration_date" in request.json and request.json["license_expiration_date"] is not None:
         request.json["license_expiration_date"] = datetime.strptime(request.json["license_expiration_date"], '%Y-%m-%d').date()
 
     try:
