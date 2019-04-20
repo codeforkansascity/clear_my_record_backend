@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 1bca56345aea
+Revision ID: 0c258db725f7
 Revises: 
-Create Date: 2019-04-20 15:57:22.433012
+Create Date: 2019-04-20 16:55:43.000348
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '1bca56345aea'
+revision = '0c258db725f7'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -121,13 +121,14 @@ def upgrade():
     sa.Column('sentence', sa.String(), nullable=True),
     sa.Column('conviction_class_type', sa.String(), nullable=True),
     sa.Column('conviction_charge_type', sa.String(), nullable=True),
-    sa.Column('eligible', sa.Boolean(), nullable=True),
-    sa.Column('please_expunge', sa.Boolean(), nullable=True),
+    sa.Column('eligible', sa.String(), nullable=True),
+    sa.Column('please_expunge', sa.String(), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=True),
     sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.Column('notes', sa.Text(), nullable=True),
     sa.Column('conviction_description', sa.String(), nullable=True),
     sa.Column('to_print', sa.Text(), nullable=True),
+    sa.Column('convicted', sa.String(), nullable=True),
     sa.ForeignKeyConstraint(['conviction_id'], ['conviction.id'], ),
     sa.PrimaryKeyConstraint('id')
     )

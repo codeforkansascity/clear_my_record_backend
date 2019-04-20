@@ -215,13 +215,14 @@ class Charge(dbs.Model):
     sentence = dbs.Column(dbs.String)
     conviction_class_type = dbs.Column(dbs.String)
     conviction_charge_type = dbs.Column(dbs.String)
-    eligible = dbs.Column(dbs.Boolean)
-    please_expunge = dbs.Column(dbs.Boolean)
+    eligible = dbs.Column(dbs.String)
+    please_expunge = dbs.Column(dbs.String)
     created_at = dbs.Column(dbs.DateTime, default=datetime.utcnow)
     updated_at = dbs.Column(dbs.DateTime, default=datetime.utcnow)
     notes = dbs.Column(dbs.Text)
     conviction_description = dbs.Column(dbs.String)
     to_print = dbs.Column(dbs.Text)
+    convicted = dbs.Column(dbs.String)
 
     def __init__(self, *data, **kwargs):
         super(Charge, self).__init__(**kwargs)

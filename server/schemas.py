@@ -20,7 +20,8 @@ class ChargeSchema(ma.ModelSchema):
             'please_expunge',
             'notes',
             'conviction_description',
-            'to_print'
+            'to_print',
+            'convicted'
         )
 
 class ConvictionSchema(ma.ModelSchema):
