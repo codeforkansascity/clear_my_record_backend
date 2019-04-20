@@ -181,7 +181,7 @@ class Conviction(dbs.Model):
     updated_at = dbs.Column(dbs.DateTime, default=datetime.utcnow)
     notes = dbs.Column(dbs.Text)
     name = dbs.Column(dbs.String)
-    arrest_date = dbs.Column(dbs.Date)
+    arrest_date = dbs.Column(dbs.String)
     created_by = dbs.Column(dbs.String)
 
     def __init__(self, *data, **kwargs):

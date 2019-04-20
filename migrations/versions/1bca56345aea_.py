@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 595de8e5dbb7
+Revision ID: 1bca56345aea
 Revises: 
-Create Date: 2019-04-16 22:03:45.547427
+Create Date: 2019-04-20 15:57:22.433012
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '595de8e5dbb7'
+revision = '1bca56345aea'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -60,21 +60,22 @@ def upgrade():
     sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.Column('notes', sa.Text(), nullable=True),
     sa.Column('filing_court', sa.String(), nullable=True),
-    sa.Column('judicial_circuit_number', sa.String(), nullable=True),
+    sa.Column('judicial_circuit_number', sa.Text(), nullable=True),
     sa.Column('county_of_prosecutor', sa.String(), nullable=True),
-    sa.Column('judge_name', sa.String(), nullable=True),
-    sa.Column('division_name', sa.String(), nullable=True),
-    sa.Column('petitioner_name', sa.String(), nullable=True),
-    sa.Column('division_number', sa.String(), nullable=True),
-    sa.Column('city_name_here', sa.String(), nullable=True),
-    sa.Column('county_name', sa.String(), nullable=True),
-    sa.Column('arresting_county', sa.String(), nullable=True),
-    sa.Column('prosecuting_county', sa.String(), nullable=True),
-    sa.Column('arresting_municipality', sa.String(), nullable=True),
+    sa.Column('judge_name', sa.Text(), nullable=True),
+    sa.Column('division_name', sa.Text(), nullable=True),
+    sa.Column('petitioner_name', sa.Text(), nullable=True),
+    sa.Column('division_number', sa.Text(), nullable=True),
+    sa.Column('city_name_here', sa.Text(), nullable=True),
+    sa.Column('county_name', sa.Text(), nullable=True),
+    sa.Column('arresting_county', sa.Text(), nullable=True),
+    sa.Column('prosecuting_county', sa.Text(), nullable=True),
+    sa.Column('arresting_municipality', sa.Text(), nullable=True),
     sa.Column('other_agencies_name', sa.Text(), nullable=True),
     sa.Column('created_by', sa.Integer(), nullable=True),
     sa.Column('modified_by', sa.Integer(), nullable=True),
     sa.Column('purged_by', sa.Integer(), nullable=True),
+    sa.Column('cms_case_number', sa.VARCHAR(length=64), nullable=True),
     sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
@@ -107,7 +108,7 @@ def upgrade():
     sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.Column('notes', sa.Text(), nullable=True),
     sa.Column('name', sa.String(), nullable=True),
-    sa.Column('arrest_date', sa.Date(), nullable=True),
+    sa.Column('arrest_date', sa.String(), nullable=True),
     sa.Column('created_by', sa.String(), nullable=True),
     sa.ForeignKeyConstraint(['client_id'], ['client.id'], ),
     sa.PrimaryKeyConstraint('id')
@@ -126,6 +127,7 @@ def upgrade():
     sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.Column('notes', sa.Text(), nullable=True),
     sa.Column('conviction_description', sa.String(), nullable=True),
+    sa.Column('to_print', sa.Text(), nullable=True),
     sa.ForeignKeyConstraint(['conviction_id'], ['conviction.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
