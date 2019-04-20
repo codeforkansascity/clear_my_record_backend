@@ -86,6 +86,7 @@ class ClientSchema(ma.Schema):
             'arresting_county',
             'arresting_municipality',
             'other_agencies_name',
+            'cms_case_number'
         )
 
 class UserSchema(ma.ModelSchema):

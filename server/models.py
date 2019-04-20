@@ -137,6 +137,9 @@ class Client(dbs.Model):
     created_by = dbs.Column(dbs.Integer)
     modified_by = dbs.Column(dbs.Integer)
     purged_by = dbs.Column(dbs.Integer)
+    # this is the number coming from the case management system
+    # that's used as a prefilter/prescreen/starting point for all of these expungements
+    cms_case_number = dbs.Column(dbs.VARCHAR(64))
 
     def __init__(self, *data, **kwargs):
         super(Client, self).__init__(**kwargs)
