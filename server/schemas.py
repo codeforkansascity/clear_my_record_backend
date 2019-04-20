@@ -19,7 +19,8 @@ class ChargeSchema(ma.ModelSchema):
             'eligible',
             'please_expunge',
             'notes',
-            'conviction_description'
+            'conviction_description',
+            'to_print'
         )
 
 class ConvictionSchema(ma.ModelSchema):
