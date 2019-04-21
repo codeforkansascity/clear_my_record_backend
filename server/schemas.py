@@ -49,7 +49,7 @@ class ConvictionSchema(ma.ModelSchema):
         )
 
 class ClientSchema(ma.Schema):
-    convictions = ma.Nested(ConvictionSchema, many=True, exclude=('client', 'charges.client'))
+    convictions = ma.Nested(ConvictionSchema, many=True, exclude=('client', ))
     # exclude clients to avoid recursion issues lmao
     user = ma.Nested('UserSchema', exclude=('clients', ))
 
