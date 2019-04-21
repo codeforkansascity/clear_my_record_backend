@@ -3,7 +3,7 @@ from server.models import *
 
 
 class ChargeSchema(ma.ModelSchema):
-    conviction = ma.Nested('ConvictionSchema', exclude=('charges', ))
+    conviction = ma.Nested('ConvictionSchema', exclude=('charges', 'client', ))
 
     class Meta:
         model = Charge
@@ -45,10 +45,11 @@ class ConvictionSchema(ma.ModelSchema):
             'notes',
             'name',
             'arrest_date',
+            'charges',
         )
 
 class ClientSchema(ma.Schema):
-    convictions = ma.Nested(ConvictionSchema, many=True, exclude=('client', ))
+    convictions = ma.Nested(ConvictionSchema, many=True, exclude=('client', 'charges.client'))
     # exclude clients to avoid recursion issues lmao
     user = ma.Nested('UserSchema', exclude=('clients', ))
 
@@ -87,7 +88,8 @@ class ClientSchema(ma.Schema):
             'arresting_county',
             'arresting_municipality',
             'other_agencies_name',
-            'cms_case_number'
+            'cms_case_number',
+            'convictions'
         )
 
 class UserSchema(ma.ModelSchema):
