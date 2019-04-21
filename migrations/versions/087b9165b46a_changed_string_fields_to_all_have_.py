@@ -1,8 +1,8 @@
-"""empty message
+"""changed string fields to all have explicit length
 
-Revision ID: 0c258db725f7
+Revision ID: 087b9165b46a
 Revises: 
-Create Date: 2019-04-20 16:55:43.000348
+Create Date: 2019-04-21 01:11:37.859664
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '0c258db725f7'
+revision = '087b9165b46a'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -30,7 +30,7 @@ def upgrade():
     sa.Column('username', sa.String(length=32), nullable=True),
     sa.Column('email', sa.String(length=120), nullable=True),
     sa.Column('pw_hash', sa.String(length=128), nullable=True),
-    sa.Column('user_type', sa.String(), nullable=True),
+    sa.Column('user_type', sa.String(length=64), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=True),
     sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.PrimaryKeyConstraint('id')
@@ -40,28 +40,28 @@ def upgrade():
     op.create_table('client',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=True),
-    sa.Column('full_name', sa.String(), nullable=True),
+    sa.Column('full_name', sa.String(length=128), nullable=True),
     sa.Column('phone', sa.VARCHAR(length=12), nullable=True),
-    sa.Column('email', sa.String(), nullable=True),
-    sa.Column('sex', sa.String(), nullable=True),
-    sa.Column('race', sa.String(), nullable=True),
+    sa.Column('email', sa.String(length=128), nullable=True),
+    sa.Column('sex', sa.String(length=16), nullable=True),
+    sa.Column('race', sa.String(length=64), nullable=True),
     sa.Column('dob', sa.Date(), nullable=True),
-    sa.Column('address_line_1', sa.String(), nullable=True),
-    sa.Column('address_line_2', sa.String(), nullable=True),
-    sa.Column('city', sa.String(), nullable=True),
-    sa.Column('state', sa.String(), nullable=True),
+    sa.Column('address_line_1', sa.String(length=64), nullable=True),
+    sa.Column('address_line_2', sa.String(length=64), nullable=True),
+    sa.Column('city', sa.String(length=64), nullable=True),
+    sa.Column('state', sa.String(length=64), nullable=True),
     sa.Column('zip_code', sa.VARCHAR(length=10), nullable=True),
-    sa.Column('license_number', sa.String(), nullable=True),
+    sa.Column('license_number', sa.String(length=64), nullable=True),
     sa.Column('license_issuing_state', sa.VARCHAR(length=2), nullable=True),
     sa.Column('license_expiration_date', sa.Date(), nullable=True),
-    sa.Column('status', sa.String(), nullable=True),
+    sa.Column('status', sa.String(length=64), nullable=True),
     sa.Column('active', sa.Boolean(), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=True),
     sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.Column('notes', sa.Text(), nullable=True),
-    sa.Column('filing_court', sa.String(), nullable=True),
+    sa.Column('filing_court', sa.String(length=64), nullable=True),
     sa.Column('judicial_circuit_number', sa.Text(), nullable=True),
-    sa.Column('county_of_prosecutor', sa.String(), nullable=True),
+    sa.Column('county_of_prosecutor', sa.String(length=64), nullable=True),
     sa.Column('judge_name', sa.Text(), nullable=True),
     sa.Column('division_name', sa.Text(), nullable=True),
     sa.Column('petitioner_name', sa.Text(), nullable=True),
@@ -96,39 +96,39 @@ def upgrade():
     op.create_table('conviction',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('client_id', sa.Integer(), nullable=True),
-    sa.Column('case_number', sa.String(), nullable=True),
-    sa.Column('agency', sa.String(), nullable=True),
-    sa.Column('court_name', sa.String(), nullable=True),
-    sa.Column('court_city_county', sa.String(), nullable=True),
-    sa.Column('judge', sa.String(), nullable=True),
-    sa.Column('record_name', sa.String(), nullable=True),
-    sa.Column('release_status', sa.String(), nullable=True),
+    sa.Column('case_number', sa.String(length=64), nullable=True),
+    sa.Column('agency', sa.String(length=64), nullable=True),
+    sa.Column('court_name', sa.String(length=64), nullable=True),
+    sa.Column('court_city_county', sa.String(length=64), nullable=True),
+    sa.Column('judge', sa.String(length=128), nullable=True),
+    sa.Column('record_name', sa.String(length=128), nullable=True),
+    sa.Column('release_status', sa.String(length=64), nullable=True),
     sa.Column('release_date', sa.Date(), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=True),
     sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.Column('notes', sa.Text(), nullable=True),
-    sa.Column('name', sa.String(), nullable=True),
-    sa.Column('arrest_date', sa.String(), nullable=True),
-    sa.Column('created_by', sa.String(), nullable=True),
+    sa.Column('name', sa.String(length=128), nullable=True),
+    sa.Column('arrest_date', sa.String(length=64), nullable=True),
+    sa.Column('created_by', sa.String(length=128), nullable=True),
     sa.ForeignKeyConstraint(['client_id'], ['client.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('charge',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('conviction_id', sa.Integer(), nullable=True),
-    sa.Column('charge', sa.String(), nullable=True),
-    sa.Column('citation', sa.String(), nullable=True),
-    sa.Column('sentence', sa.String(), nullable=True),
-    sa.Column('conviction_class_type', sa.String(), nullable=True),
-    sa.Column('conviction_charge_type', sa.String(), nullable=True),
-    sa.Column('eligible', sa.String(), nullable=True),
-    sa.Column('please_expunge', sa.String(), nullable=True),
+    sa.Column('charge', sa.String(length=128), nullable=True),
+    sa.Column('citation', sa.String(length=128), nullable=True),
+    sa.Column('sentence', sa.String(length=128), nullable=True),
+    sa.Column('conviction_class_type', sa.String(length=64), nullable=True),
+    sa.Column('conviction_charge_type', sa.String(length=64), nullable=True),
+    sa.Column('eligible', sa.String(length=64), nullable=True),
+    sa.Column('please_expunge', sa.String(length=64), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=True),
     sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.Column('notes', sa.Text(), nullable=True),
-    sa.Column('conviction_description', sa.String(), nullable=True),
+    sa.Column('conviction_description', sa.String(length=256), nullable=True),
     sa.Column('to_print', sa.Text(), nullable=True),
-    sa.Column('convicted', sa.String(), nullable=True),
+    sa.Column('convicted', sa.String(length=64), nullable=True),
     sa.ForeignKeyConstraint(['conviction_id'], ['conviction.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
