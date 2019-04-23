@@ -140,6 +140,7 @@ class Client(dbs.Model):
     # this is the number coming from the case management system
     # that's used as a prefilter/prescreen/starting point for all of these expungements
     cms_case_number = dbs.Column(dbs.VARCHAR(64))
+    previous_expungements = dbs.Column(dbs.Text)
 
     def __init__(self, *data, **kwargs):
         super(Client, self).__init__(**kwargs)

@@ -89,7 +89,7 @@ class ClientSchema(ma.Schema):
             'arresting_municipality',
             'other_agencies_name',
             'cms_case_number',
-            'convictions'
+            'previous_expungements'
         )
 
 class UserSchema(ma.ModelSchema):
