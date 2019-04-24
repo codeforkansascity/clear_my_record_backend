@@ -285,7 +285,17 @@ def update_conviction(conviction_id):
 @core_bp.route('/convictions/<int:conviction_id>', methods=['DELETE'])
 def delete_conviction(conviction_id):
     conviction = models.Conviction.query.get(conviction_id)
-    pass
+
+    if conviction is None:
+        return Response("Could not find convictions with ID {}".format(conviction_id), status=404, mimetype='text/plain')
+
+    charges = conviction.charges
+    for charge in charges:
+        dbs.session.delete(charge)
+
+    dbs.session.delete(conviction)
+    dbs.session.commit()
+    return Response("Success", status=200, mimetype='text/plain')
 
 
 @core_bp.route('/clients/<int:client_id>/convictions/<int:conviction_id>/charges', methods=['GET'])
@@ -379,4 +389,10 @@ def update_charge(charge_id):
 
 @core_bp.route('/charges/<int:charge_id>', methods=['DELETE'])
 def delete_charge(charge_id):
-    pass
+   charge = models.Charge.query.get(charge_id)
+   if charge is None:
+       return Response("Charge with ID {} not found".format(charge_id), status=404, mimetype='text/plain')
+
+   dbs.session.delete(charge)
+   dbs.session.commit()
+   return Response("Success", status=200, mimetype='text/plain')
