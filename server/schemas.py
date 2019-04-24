@@ -22,7 +22,6 @@ class ChargeSchema(ma.ModelSchema):
             'conviction_description',
             'to_print',
             'convicted',
-            'approximate_date_of_charge',
         )
 
 class ConvictionSchema(ma.ModelSchema):
@@ -47,6 +46,7 @@ class ConvictionSchema(ma.ModelSchema):
             'name',
             'arrest_date',
             'charges',
+            'approximate_date_of_charge',
         )
 
 class ClientSchema(ma.Schema):
