@@ -114,6 +114,7 @@ class Client(dbs.Model):
     zip_code = dbs.Column(dbs.VARCHAR(10))
     license_number = dbs.Column(dbs.String(64))
     license_issuing_state = dbs.Column(dbs.VARCHAR(2))
+    full_license_issuing_state = dbs.Column(dbs.String(64))
     license_expiration_date = dbs.Column(dbs.Date)
     status = dbs.Column(dbs.String(64))
     active = dbs.Column(dbs.Boolean)
@@ -184,6 +185,7 @@ class Conviction(dbs.Model):
     name = dbs.Column(dbs.String(128))
     arrest_date = dbs.Column(dbs.String(64))
     created_by = dbs.Column(dbs.String(128))
+    approximate_date_of_charge = dbs.Column(dbs.Text)
 
     def __init__(self, *data, **kwargs):
         super(Conviction, self).__init__(**kwargs)

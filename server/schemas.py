@@ -21,7 +21,8 @@ class ChargeSchema(ma.ModelSchema):
             'notes',
             'conviction_description',
             'to_print',
-            'convicted'
+            'convicted',
+            'approximate_date_of_charge',
         )
 
 class ConvictionSchema(ma.ModelSchema):
@@ -69,7 +70,7 @@ class ClientSchema(ma.Schema):
             'state',
             'zip_code',
             'license_number',
-            'license_issuing_state',
+            'full_license_issuing_state',
             'license_expiration_date',
             'status',
             'active',
