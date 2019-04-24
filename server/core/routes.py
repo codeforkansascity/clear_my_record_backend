@@ -186,7 +186,22 @@ def update_client(client_id):
 
 @core_bp.route('/clients/<int:client_id>', methods=['DELETE'])
 def delete_client(client_id):
-    pass
+    client = models.Client.query.get(client_id)
+
+    if client is None:
+        return Response("Client with ID {}".format(client_id), status=404, mimetype='text/plain')
+
+    convictions = client.convictions
+
+    for conviction in convictions:
+        charges = conviction.charges
+        for charge in charges:
+            dbs.session.delete(charge)
+        dbs.session.delete(conviction)
+
+    dbs.session.delete(client)
+    dbs.session.commit()
+    return Response("Success", status=200, mimetype='text/plain')
 
 
 @core_bp.route('/clients/<int:client_id>/convictions', methods=['GET'])
