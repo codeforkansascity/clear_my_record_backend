@@ -7,7 +7,7 @@ from flask_jwt_extended import (jwt_required, create_access_token,
 from flask_restful import Resource
 from sqlalchemy import exc
 from datetime import datetime
-
+from marshmallow import ValidationError
 
 @core_bp.route('/')
 @core_bp.route('/index')
@@ -96,6 +96,7 @@ def update_user(user_id):
 @core_bp.route('/clients', methods=['POST'])
 def add_client():
     client = models.Client()
+    client_data = None
 
     if request.json:
         if "dob" in request.json and request.json["dob"] is not None:
@@ -104,18 +105,25 @@ def add_client():
         if "license_expiration_date" in request.json and request.json["license_expiration_date"] is not None:
             request.json["license_expiration_date"] = datetime.strptime(request.json["license_expiration_date"], '%Y-%m-%d').date()
         try:
-            client.update(request.json)
-            dbs.session.add(client)
-            dbs.session.commit()
-            dbs.session.flush()
-            return jsonify(client.id)
-        except AttributeError as err:
-            dbs.session.rollback()
-            return Response("{}".format(err), status=422, mimetype='text/plain')
-        except Exception as err:
-            # this will have to work for now
-            dbs.session.rollback()
-            return Response("Issue adding new client", status=500, mimetype='text/plain')
+            client_data = client_schema.load(request.json)
+            print(client_data)
+            return Response("", status=200, mimetype='text/plain')
+        except ValidationError as err:
+            return jsonify(err.messages), 422
+
+        # try:
+        #     client.update(request.json)
+        #     dbs.session.add(client)
+        #     dbs.session.commit()
+        #     dbs.session.flush()
+        #     return jsonify(client.id)
+        # except AttributeError as err:
+        #     dbs.session.rollback()
+        #     return Response("{}".format(err), status=422, mimetype='text/plain')
+        # except Exception as err:
+        #     # this will have to work for now
+        #     dbs.session.rollback()
+        #     return Response("Issue adding new client", status=500, mimetype='text/plain')
     else:
         dbs.session.add(client)
         dbs.session.commit()

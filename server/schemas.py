@@ -1,6 +1,6 @@
 from server import ma
 from server.models import *
-
+from marshmallow import ValidationError
 
 class ChargeSchema(ma.ModelSchema):
     conviction = ma.Nested('ConvictionSchema', exclude=('charges', 'client', ))
@@ -49,10 +49,15 @@ class ConvictionSchema(ma.ModelSchema):
             'approximate_date_of_charge',
         )
 
-class ClientSchema(ma.Schema):
+def non_empty_field(data):
+    if not data:
+        raise ValidationError('Data not provided.')
+
+class ClientSchema(ma.ModelSchema):
     convictions = ma.Nested(ConvictionSchema, many=True, exclude=('client', ))
     # exclude clients to avoid recursion issues lmao
     user = ma.Nested('UserSchema', exclude=('clients', ))
+    full_name = ma.Str(validate=non_empty_field)
 
     class Meta:
         model = Client
