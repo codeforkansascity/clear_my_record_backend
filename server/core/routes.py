@@ -106,7 +106,6 @@ def add_client():
             request.json["license_expiration_date"] = datetime.strptime(request.json["license_expiration_date"], '%Y-%m-%d').date()
         try:
             client_data = client_schema.load(request.json)
-            print(client_data)
             return Response("", status=200, mimetype='text/plain')
         except ValidationError as err:
             return jsonify(err.messages), 422

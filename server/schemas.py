@@ -50,6 +50,7 @@ class ConvictionSchema(ma.ModelSchema):
         )
 
 def non_empty_field(data):
+    print(data)
     if not data:
         raise ValidationError('Data not provided.')
 
@@ -58,9 +59,11 @@ class ClientSchema(ma.ModelSchema):
     # exclude clients to avoid recursion issues lmao
     user = ma.Nested('UserSchema', exclude=('clients', ))
     full_name = ma.Str(validate=non_empty_field)
+    phone = ma.Str(validate=non_empty_field)
 
     class Meta:
         model = Client
+        strict = True
         fields = (
             'id',
             'full_name',
