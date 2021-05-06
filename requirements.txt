@@ -10,7 +10,7 @@
 Flask == 1.0.2
 
 # server/__init__.py: 5
-Flask_Cors == 3.0.7
+Flask_Cors == 3.0.9
 
 # server/__init__.py: 7
 # server/auth/resources.py: 4
